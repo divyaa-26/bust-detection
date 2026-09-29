@@ -132,37 +132,71 @@ export const ValidationView: React.FC = () => {
             <span>Real Model Calibration Curve (Binned Predicted P(Bust) vs Observed Event Frequency)</span>
           </h3>
           <span className="text-xs font-mono text-slate-400">
-            {isReal ? `10 Bins (N = ${dataset.test_samples || 2880} held-out test pairs)` : '10 Bins (Prototype)'}
+            {isReal 
+              ? `10 Calibration Bins · ${calibBins.filter((b: any) => (b.sample_count || 0) > 0).length} Populated Bins · N=${(dataset.test_samples || 2880).toLocaleString()} Held-Out Test Pairs` 
+              : '10 Calibration Bins (Prototype)'}
           </span>
         </div>
 
         <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 pt-2">
           {calibBins.map((bin: any, idx: number) => {
+            const sampleCount = bin.sample_count || 0;
+            const isPopulated = sampleCount > 0;
             const predPct = Math.round((bin.forecast_prob || bin.bin_center) * 100);
-            const obsPct = Math.round((bin.observed_frequency || 0) * 100);
-            const diff = Math.abs(predPct - obsPct);
+            const obsPct = isPopulated ? Math.round((bin.observed_frequency || 0) * 100) : null;
+            const diff = isPopulated && obsPct !== null ? Math.abs(predPct - obsPct) : null;
+
             return (
-              <div key={idx} className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-center text-xs flex flex-col justify-between">
-                <span className="text-[10px] font-mono text-slate-500">Bin {bin.bin_index || idx + 1}</span>
-                <div className="my-2 h-24 bg-slate-950 rounded flex items-end justify-center space-x-1 p-1">
+              <div 
+                key={idx} 
+                className={`p-2.5 rounded-lg border text-center text-xs flex flex-col justify-between transition ${
+                  isPopulated 
+                    ? 'bg-slate-900 border-slate-700/80 shadow-md' 
+                    : 'bg-slate-900/40 border-slate-800/60 opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
+                  <span>Bin {bin.bin_index || idx + 1}</span>
+                  {!isPopulated && <span className="text-[8px] text-slate-600 uppercase">Empty</span>}
+                </div>
+
+                <div className="my-2 h-24 bg-slate-950 rounded flex items-end justify-center space-x-1 p-1 relative overflow-hidden">
+                  {/* Predicted probability bar */}
                   <div
-                    className="w-3 bg-sky-500 rounded-t"
+                    className={`w-3 rounded-t ${isPopulated ? 'bg-sky-500' : 'bg-sky-500/30'}`}
                     style={{ height: `${Math.max(4, Math.min(100, predPct))}%` }}
                     title={`Predicted: ${predPct}%`}
                   />
-                  <div
-                    className="w-3 bg-emerald-500 rounded-t"
-                    style={{ height: `${Math.max(4, Math.min(100, obsPct))}%` }}
-                    title={`Observed: ${obsPct}%`}
-                  />
+
+                  {/* Observed frequency bar - strictly rendered ONLY if bin is populated */}
+                  {isPopulated && obsPct !== null ? (
+                    <div
+                      className="w-3 bg-emerald-500 rounded-t"
+                      style={{ height: `${Math.max(4, Math.min(100, obsPct))}%` }}
+                      title={`Observed: ${obsPct}%`}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center p-1 pointer-events-none">
+                      <span className="text-[8px] font-mono text-slate-600 text-center leading-tight">
+                        No test samples
+                      </span>
+                    </div>
+                  )}
                 </div>
+
                 <div className="space-y-0.5 text-[9px] font-mono">
-                  <div className="text-sky-400">P: {predPct}%</div>
-                  <div className="text-emerald-400">O: {obsPct}%</div>
-                  <div className={`font-bold ${diff <= 5 ? 'text-slate-400' : 'text-amber-400'}`}>
-                    Δ: {diff}%
+                  <div className={isPopulated ? "text-sky-400 font-semibold" : "text-sky-400/60"}>
+                    P: {predPct}%
                   </div>
-                  <div className="text-slate-500 text-[8px]">N={bin.sample_count || 0}</div>
+                  <div className={isPopulated ? "text-emerald-400 font-semibold" : "text-slate-600"}>
+                    O: {isPopulated && obsPct !== null ? `${obsPct}%` : '—'}
+                  </div>
+                  <div className={isPopulated ? (diff !== null && diff <= 5 ? 'text-slate-300 font-bold' : 'text-amber-400 font-bold') : 'text-slate-600 font-normal'}>
+                    Δ: {isPopulated && diff !== null ? `${diff}%` : '—'}
+                  </div>
+                  <div className={`text-[8px] ${isPopulated ? 'text-slate-300 font-bold' : 'text-slate-600'}`}>
+                    N = {sampleCount}
+                  </div>
                 </div>
               </div>
             );
