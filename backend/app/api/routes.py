@@ -305,34 +305,48 @@ def get_model_metrics():
     """Honest scientific validation, probability calibration profiles, and baseline benchmarks."""
     model_info = trained_model.get_model_info()
     calib = ProbabilityCalibrationEngine.compute_reliability_curve()
-    return {
-        "status": "TRAINED_OPERATIONAL" if trained_model.is_loaded else "PROTOTYPE_STAGE_1",
-        "model_type": "LightGBM Binary Classifier + Isotonic Calibration",
-        "dataset": {
-            "training_samples": 114120,
-            "validation_samples": 5760,
-            "test_samples": 20160,
-            "total_samples": 140040,
-            "test_bust_base_rate": "9.27%"
-        },
-        "metrics": model_info.get("metrics", {
-            "brier_score": 0.0262,
-            "brier_skill_score_vs_climatology": 0.6878,
-            "roc_auc": 0.9832,
-            "pr_auc": 0.8393,
-            "expected_calibration_error": 0.0163
-        }),
-        "baselines_comparison": model_info.get("baselines_comparison", {
-            "climatology_brier_score": 0.0841,
-            "lead_decay_brier_score": 0.1365,
-            "ensemble_spread_brier_score": 0.0826,
-            "demo_heuristic_brier_score": 0.1221,
-            "demo_heuristic_roc_auc": 0.9293
-        }),
-        "feature_importance_shap": model_info.get("feature_importance_shap", []),
-        "calibration": calib,
-        "active_model_info": model_info
-    }
+    
+    if trained_model.is_real_model:
+        return {
+            "status": "TRAINED_OPERATIONAL",
+            "model_type": "LightGBM Binary Classifier + Isotonic Calibration (Real NWP + IMD Model)",
+            "model_badge": "REAL NWP + IMD TRAINED MODEL",
+            "is_real_model": True,
+            "dataset": {
+                "training_samples": model_info.get("training_samples", 7200),
+                "validation_samples": model_info.get("validation_samples", 3600),
+                "test_samples": model_info.get("test_samples", 2880),
+                "total_samples": 13680,
+                "initialization_dates": 38,
+                "data_source": "NOAA GFS 0.25° Operational GRIB2 + IMD 24h Daily Gridded Observations",
+                "test_bust_base_rate": model_info.get("test_bust_base_rate", "3.96%")
+            },
+            "metrics": model_info.get("metrics", {}),
+            "baselines_comparison": model_info.get("baselines_comparison", {}),
+            "feature_importance_shap": model_info.get("feature_importance_shap", []),
+            "calibration": calib,
+            "active_model_info": model_info,
+            "honesty_disclosure": model_info.get("honesty_disclosure", "")
+        }
+    else:
+        return {
+            "status": "PROTOTYPE_STAGE_1",
+            "model_type": "LightGBM Binary Classifier (Synthetic Prototype)",
+            "model_badge": "SYNTHETIC PROTOTYPE MODEL",
+            "is_real_model": False,
+            "dataset": {
+                "training_samples": 114120,
+                "validation_samples": 5760,
+                "test_samples": 20160,
+                "total_samples": 140040,
+                "test_bust_base_rate": "9.27%"
+            },
+            "metrics": model_info.get("metrics", {}),
+            "baselines_comparison": model_info.get("baselines_comparison", {}),
+            "feature_importance_shap": model_info.get("feature_importance_shap", []),
+            "calibration": calib,
+            "active_model_info": model_info
+        }
 
 @router.get("/matrix/region-lead")
 def get_region_lead_matrix(

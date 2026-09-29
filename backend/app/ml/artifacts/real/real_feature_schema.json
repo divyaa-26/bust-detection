@@ -1,0 +1,42 @@
+{
+  "feature_columns": [
+    "lead_time_days",
+    "forecast_value_mm",
+    "climatological_normal_mm",
+    "forecast_anomaly_mm",
+    "subdivision_code",
+    "macro_region_code",
+    "terrain_type_code",
+    "is_coastal",
+    "analogue_historical_bust_rate",
+    "analogue_mean_error_mm"
+  ],
+  "feature_labels": {
+    "lead_time_days": "Forecast Lead Time (Days D+1..D+10)",
+    "forecast_value_mm": "Predicted 24h Precipitation (mm)",
+    "climatological_normal_mm": "Historical Climatological Baseline Normal (mm)",
+    "forecast_anomaly_mm": "Synoptic Departure / Forecast Anomaly (mm)",
+    "subdivision_code": "Meteorological Subdivision Index (1..36)",
+    "macro_region_code": "Synoptic Macro-Region Classification",
+    "terrain_type_code": "Topographical Regime (Ghats/Plains/Himalayan/Coastal)",
+    "is_coastal": "Maritime Boundary Flag",
+    "analogue_historical_bust_rate": "Historical Regime Analogue Bust Rate",
+    "analogue_mean_error_mm": "Historical Regime Mean Verification Error (mm)"
+  },
+  "macro_region_map": {
+    "South Peninsula": 1,
+    "East & Northeast": 2,
+    "Central India": 3,
+    "Northwest India": 4,
+    "Himalayan": 5
+  },
+  "terrain_map": {
+    "plains": 1,
+    "coastal": 2,
+    "ghats": 3,
+    "himalayan": 4,
+    "island": 5
+  },
+  "target_column": "bust_label",
+  "model_version": "1.0.0-real-nwp"
+}

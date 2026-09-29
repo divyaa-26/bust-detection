@@ -1,0 +1,12 @@
+{
+  "model_name": "SIH26079 Forecast Bust Reliability Predictor (Real Model)",
+  "framework": "LightGBM 4.x + Scikit-Learn IsotonicRegression",
+  "training_data_source": "NOAA GFS 0.25\u00b0 Operational GRIB2 Archive (00 UTC Cycle)",
+  "verification_source": "IMD 24h Daily Gridded Observations (03Z-03Z Window)",
+  "total_initialization_dates": 38,
+  "total_sample_pairs": 13680,
+  "spatial_aggregation": "Area-weighted latitude-cosine polygon surface integral (36 IMD subdivisions)",
+  "temporal_alignment": "Exact 03Z-to-03Z accumulation interval equality across D1-D10",
+  "anti_leakage_guarantee": "Strict chronological temporal blocking. Zero future observation or analogue contamination.",
+  "scientific_disclaimer": "Predicts the probability of medium-range NWP forecast bust (failure). Does not predict meteorological raw weather."
+}

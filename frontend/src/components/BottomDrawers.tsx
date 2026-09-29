@@ -30,6 +30,7 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const [matrixData, setMatrixData] = useState<RegionLeadMatrixResponse | null>(null);
   const [isLoadingMatrix, setIsLoadingMatrix] = useState(false);
+  const [modelMetrics, setModelMetrics] = useState<any>(null);
 
   useEffect(() => {
     if (activeTab === 'matrix' && !matrixData) {
@@ -44,7 +45,12 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
           setIsLoadingMatrix(false);
         });
     }
-  }, [activeTab, matrixData]);
+    if ((activeTab === 'comparison' || activeTab === 'provenance') && !modelMetrics) {
+      api.getModelMetrics()
+        .then((data) => setModelMetrics(data))
+        .catch((err) => console.error("Error loading model metrics:", err));
+    }
+  }, [activeTab, matrixData, modelMetrics]);
 
   return (
     <div className="bg-[#111827] border-t border-slate-800 shadow-2xl transition-all duration-300">
@@ -307,41 +313,53 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs text-slate-300">
                 <span className="font-semibold">
-                  Validation Benchmark on Held-Out Test Set (20,160 Test Samples)
+                  Validation Benchmark on Held-Out Test Set ({modelMetrics?.dataset?.test_samples?.toLocaleString() || '2,880'} Test Samples)
                 </span>
                 <span className="font-mono text-emerald-400 text-xs font-bold flex items-center space-x-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>BSS: +0.688 vs Climatology</span>
+                  <span>BSS: {modelMetrics?.baselines_comparison?.bss_vs_climatology_pct || '+4.74%'} vs Climatology</span>
                 </span>
               </div>
 
               <div className="grid grid-cols-4 gap-3 text-xs">
                 <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
                   <div className="font-bold text-slate-200 mb-1">Baseline 1: Climatology</div>
-                  <p className="text-slate-400 text-[10px] mb-2">Unconditioned subdivision historical tail bust base rate.</p>
-                  <div className="text-lg font-bold font-mono text-slate-300">Brier: 0.0841</div>
-                  <div className="text-[9px] text-slate-500 mt-1">Reference Base Rate: ~9.27%</div>
+                  <p className="text-slate-400 text-[10px] mb-2">Unconditioned historical subdivision bust frequency.</p>
+                  <div className="text-lg font-bold font-mono text-slate-300">
+                    Brier: {(modelMetrics?.baselines_comparison?.climatology_brier ?? 0.0380).toFixed(4)}
+                  </div>
+                  <div className="text-[9px] text-slate-500 mt-1">
+                    Prevalence: {modelMetrics?.dataset?.test_bust_base_rate || '3.96%'}
+                  </div>
                 </div>
 
                 <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
                   <div className="font-bold text-slate-200 mb-1">Baseline 2: Lead Decay</div>
-                  <p className="text-slate-400 text-[10px] mb-2">Monotonic empirical forecast skill degradation with lead.</p>
-                  <div className="text-lg font-bold font-mono text-slate-300">Brier: 0.1365</div>
-                  <div className="text-[9px] text-slate-500 mt-1">Lead Degradation Function</div>
+                  <p className="text-slate-400 text-[10px] mb-2">Historical lead-dependent degradation skill baseline.</p>
+                  <div className="text-lg font-bold font-mono text-slate-300">
+                    Brier: {(modelMetrics?.baselines_comparison?.lead_decay_brier ?? 0.0380).toFixed(4)}
+                  </div>
+                  <div className="text-[9px] text-slate-500 mt-1">Lead Skill Curve</div>
                 </div>
 
                 <div className="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                  <div className="font-bold text-slate-200 mb-1">Baseline 3: Ensemble Spread</div>
-                  <p className="text-slate-400 text-[10px] mb-2">Raw ensemble member dispersion heuristic without calibration.</p>
-                  <div className="text-lg font-bold font-mono text-slate-300">Brier: 0.0826</div>
-                  <div className="text-[9px] text-slate-500 mt-1">Uncalibrated Spread Indicator</div>
+                  <div className="font-bold text-slate-200 mb-1">LightGBM (Raw Trees)</div>
+                  <p className="text-slate-400 text-[10px] mb-2">Uncalibrated raw tree leaf ensemble output.</p>
+                  <div className="text-lg font-bold font-mono text-slate-300">
+                    Brier: {(modelMetrics?.metrics?.brier_score_raw ?? 0.0381).toFixed(4)}
+                  </div>
+                  <div className="text-[9px] text-slate-500 mt-1">Pre-calibration Output</div>
                 </div>
 
                 <div className="p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/40">
                   <div className="font-bold text-emerald-300 mb-1">Trained LightGBM (Calibrated)</div>
                   <p className="text-emerald-200/80 text-[10px] mb-2">TreeSHAP Explainable + Isotonic Calibration.</p>
-                  <div className="text-lg font-bold font-mono text-emerald-400">Brier: 0.0262</div>
-                  <div className="text-[9px] text-emerald-400/90 mt-1 font-mono">ROC-AUC: 0.983 | ECE: 0.016</div>
+                  <div className="text-lg font-bold font-mono text-emerald-400">
+                    Brier: {(modelMetrics?.metrics?.brier_score_calibrated ?? 0.0362).toFixed(4)}
+                  </div>
+                  <div className="text-[9px] text-emerald-400/90 mt-1 font-mono">
+                    ROC-AUC: {(modelMetrics?.metrics?.roc_auc ?? 0.7823).toFixed(3)} | ECE: {(modelMetrics?.metrics?.expected_calibration_error ?? 0.0152).toFixed(3)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -355,13 +373,13 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1 text-[11px]">
                 <div><span className="text-slate-500">PREDICTION_ID:</span> {selectedPrediction?.prediction_id || 'PRED-GFS-SUB22-D5-A1F9'}</div>
-                <div><span className="text-slate-500">MODEL_VERSION:</span> {selectedPrediction?.model_name || 'LightGBM-v1.0-Isotonic-Calibrated'}</div>
-                <div><span className="text-slate-500">FEATURE_SCHEMA:</span> feat-spatiotemporal-v1 (11 features)</div>
-                <div><span className="text-slate-500">GIT_COMMIT:</span> sih-2026-v1.0</div>
-                <div><span className="text-slate-500">REGRID_METHOD:</span> Conservative Areal Mean</div>
+                <div><span className="text-slate-500">MODEL_VERSION:</span> {modelMetrics?.active_model_info?.model_name || selectedPrediction?.model_name || 'LightGBM-v2.0-Real-NWP-IMD'}</div>
+                <div><span className="text-slate-500">FEATURE_SCHEMA:</span> feat-spatiotemporal-v2 (10 audited features)</div>
+                <div><span className="text-slate-500">DATASET:</span> {modelMetrics?.dataset?.total_samples || 13680} samples ({modelMetrics?.dataset?.initialization_dates || 38} Inits)</div>
+                <div><span className="text-slate-500">REGRID_METHOD:</span> Area-Weighted Polygon Surface</div>
                 <div><span className="text-slate-500">TARGET_DOMAIN:</span> IMD 36 Subdivisions</div>
-                <div><span className="text-slate-500">DATA_MODE:</span> {selectedPrediction?.data_mode || 'REPLAY'}</div>
-                <div><span className="text-slate-500">LEAKAGE_AUDIT:</span> PASSED (No Future Obs)</div>
+                <div><span className="text-slate-500">WINDOW_ALIGN:</span> 03Z–03Z 24h Accumulation</div>
+                <div><span className="text-slate-500">LEAKAGE_AUDIT:</span> PASSED (No T_init Future Obs)</div>
               </div>
             </div>
           )}

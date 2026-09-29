@@ -1,0 +1,150 @@
+{
+  "dataset_name": "expanded_real_nwp_dataset.csv",
+  "model_type": "LightGBM + Isotonic Calibration (Real NWP)",
+  "train_samples": 7200,
+  "validation_samples": 3600,
+  "test_samples": 2880,
+  "test_bust_count": 114,
+  "test_bust_rate": 0.0396,
+  "metrics": {
+    "brier_score_calibrated": 0.0362,
+    "brier_score_uncalibrated": 0.0366,
+    "brier_score_climatology": 0.038,
+    "brier_score_lead_baseline": 0.038,
+    "brier_skill_score_vs_climatology": 0.0474,
+    "brier_skill_score_vs_lead_baseline": 0.0475,
+    "roc_auc": 0.7823,
+    "pr_auc": 0.1326,
+    "expected_calibration_error": 0.0152
+  },
+  "baselines_comparison": {
+    "climatological_brier": 0.038,
+    "lead_decay_brier": 0.038,
+    "real_calibrated_brier": 0.0362,
+    "bss_gain_over_climatology_pct": 4.74
+  },
+  "feature_importance_shap": [
+    {
+      "feature": "forecast_value_mm",
+      "label": "Predicted 24h Precipitation (mm)",
+      "importance": 0.2567
+    },
+    {
+      "feature": "forecast_anomaly_mm",
+      "label": "Synoptic Departure / Forecast Anomaly (mm)",
+      "importance": 0.0802
+    },
+    {
+      "feature": "climatological_normal_mm",
+      "label": "Historical Climatological Baseline Normal (mm)",
+      "importance": 0.0566
+    },
+    {
+      "feature": "lead_time_days",
+      "label": "Forecast Lead Time (Days D+1..D+10)",
+      "importance": 0.052
+    },
+    {
+      "feature": "subdivision_code",
+      "label": "Meteorological Subdivision Index (1..36)",
+      "importance": 0.0176
+    },
+    {
+      "feature": "is_coastal",
+      "label": "Maritime Boundary Flag",
+      "importance": 0.0171
+    },
+    {
+      "feature": "analogue_mean_error_mm",
+      "label": "Historical Regime Mean Verification Error (mm)",
+      "importance": 0.0049
+    },
+    {
+      "feature": "terrain_type_code",
+      "label": "Topographical Regime (Ghats/Plains/Himalayan/Coastal)",
+      "importance": 0.0012
+    },
+    {
+      "feature": "macro_region_code",
+      "label": "Synoptic Macro-Region Classification",
+      "importance": 0.0
+    },
+    {
+      "feature": "analogue_historical_bust_rate",
+      "label": "Historical Regime Analogue Bust Rate",
+      "importance": 0.0
+    }
+  ],
+  "calibration_bins": [
+    {
+      "bin_index": 1,
+      "bin_center": 0.05,
+      "forecast_prob": 0.032,
+      "observed_frequency": 0.023,
+      "sample_count": 2584
+    },
+    {
+      "bin_index": 2,
+      "bin_center": 0.15,
+      "forecast_prob": 0.16,
+      "observed_frequency": 0.195,
+      "sample_count": 226
+    },
+    {
+      "bin_index": 3,
+      "bin_center": 0.25,
+      "forecast_prob": 0.25,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    },
+    {
+      "bin_index": 4,
+      "bin_center": 0.35,
+      "forecast_prob": 0.333,
+      "observed_frequency": 0.157,
+      "sample_count": 70
+    },
+    {
+      "bin_index": 5,
+      "bin_center": 0.45,
+      "forecast_prob": 0.45,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    },
+    {
+      "bin_index": 6,
+      "bin_center": 0.55,
+      "forecast_prob": 0.55,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    },
+    {
+      "bin_index": 7,
+      "bin_center": 0.65,
+      "forecast_prob": 0.65,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    },
+    {
+      "bin_index": 8,
+      "bin_center": 0.75,
+      "forecast_prob": 0.75,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    },
+    {
+      "bin_index": 9,
+      "bin_center": 0.85,
+      "forecast_prob": 0.85,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    },
+    {
+      "bin_index": 10,
+      "bin_center": 0.95,
+      "forecast_prob": 0.95,
+      "observed_frequency": 0.0,
+      "sample_count": 0
+    }
+  ]
+}
