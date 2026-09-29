@@ -64,6 +64,7 @@ def get_configuration():
         "model_version": config.model_version,
         "feature_version": config.feature_version,
         "bust_definition_version": config.bust_definition_version,
+        "calibration_version": config.calibration_version,
         "dataset_version": config.dataset_version,
         "git_commit": config.git_commit,
         "active_providers": config.active_providers

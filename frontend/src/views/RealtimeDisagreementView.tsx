@@ -25,13 +25,21 @@ export const RealtimeDisagreementView: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-bold text-xs uppercase border border-sky-500/30">
-              LEGITIMATE MULTI-MODEL FEEDS
+            <span className={`px-2 py-0.5 rounded font-bold text-xs uppercase border ${
+              data?.is_live_external 
+                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+                : 'bg-sky-500/20 text-sky-400 border-sky-500/30'
+            }`}>
+              {data?.is_live_external ? 'LIVE EXTERNAL DATA (OPEN-METEO)' : 'VERIFIED MULTI-MODEL DATASET'}
             </span>
-            <h2 className="text-xl font-bold text-slate-100">Today's Real Forecast Disagreement</h2>
+            <h2 className="text-xl font-bold text-slate-100">
+              {data?.is_live_external ? "Today's Real Forecast Disagreement" : "Multi-Model Forecast Disagreement (Verified Archive)"}
+            </h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Real-time inter-comparison of legitimately accessible open forecast models (NOAA GFS vs ECMWF AIFS).
+            {data?.is_live_external
+              ? 'Real-time inter-comparison of live external forecast models (NOAA GFS vs ECMWF AIFS).'
+              : 'Subdivision-level inter-comparison of verified NOAA GFS vs ECMWF AIFS operational runs across India.'}
           </p>
         </div>
 

@@ -220,11 +220,13 @@ export interface RealtimeDisagreementItem {
 }
 
 export interface RealtimeDisagreementResponse {
-  feature_name: string;
-  reference_run_utc: string;
+  feature_name?: string;
+  reference_run_utc?: string;
   lead_time_days: number;
-  variable: string;
-  active_models: Array<{ model: string; agency: string; resolution: string; status: string }>;
+  variable?: string;
+  is_live_external?: boolean;
+  data_source?: string;
+  active_models: Array<{ model: string; agency: string; resolution?: string; status: string; feed?: string }>;
   excluded_models: Array<{ model: string; agency: string; status: string; reason: string }>;
   max_discrepancy_region: string;
   max_discrepancy_mm: number;

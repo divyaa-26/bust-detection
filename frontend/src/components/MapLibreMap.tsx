@@ -216,10 +216,10 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
       return [
         'step',
         ['get', 'bust_prob'],
-        '#10b981', // < 0.28 (Low Risk - green)
-        0.28, '#f59e0b', // 0.28 - 0.50 (Moderate - amber)
-        0.50, '#ea580c', // 0.50 - 0.75 (High - orange)
-        0.75, '#dc2626'  // > 0.75 (Severe Bust Risk - crimson)
+        '#10b981', // < 0.25 (Low Risk - green)
+        0.25, '#f59e0b', // 0.25 - 0.45 (Moderate - amber)
+        0.45, '#ea580c', // 0.45 - 0.70 (High - orange)
+        0.70, '#dc2626'  // > 0.70 (Critical Inspection - crimson)
       ];
     }
   }
