@@ -6,21 +6,50 @@ import {
   SystemMonitoringStatus
 } from '../types';
 
-const BASE_URL = '/api';
+const getBaseUrl = (): string => {
+  const envUrl = (import.meta as any).env?.VITE_API_URL;
+  if (envUrl) return envUrl;
+  if (typeof window !== 'undefined' && window.location.port === '5173') {
+    return 'http://127.0.0.1:8000/api';
+  }
+  return '/api';
+};
+
+const BASE_URL = getBaseUrl();
+
+async function fetchWithFallback(endpoint: string, options?: RequestInit): Promise<Response> {
+  const primaryUrl = `${BASE_URL}${endpoint}`;
+  try {
+    const res = await fetch(primaryUrl, options);
+    if (res.ok) return res;
+    if (!primaryUrl.startsWith('http://127.0.0.1:8000') && !primaryUrl.startsWith('http://localhost:8000')) {
+      const fallbackUrl = `http://127.0.0.1:8000/api${endpoint}`;
+      const fallbackRes = await fetch(fallbackUrl, options);
+      if (fallbackRes.ok) return fallbackRes;
+    }
+    return res;
+  } catch (err) {
+    if (!primaryUrl.startsWith('http://127.0.0.1:8000') && !primaryUrl.startsWith('http://localhost:8000')) {
+      const fallbackUrl = `http://127.0.0.1:8000/api${endpoint}`;
+      return await fetch(fallbackUrl, options);
+    }
+    throw err;
+  }
+}
 
 export const api = {
   async getHealth() {
-    const res = await fetch(`${BASE_URL}/health`);
+    const res = await fetchWithFallback('/health');
     return res.json();
   },
 
   async getConfig() {
-    const res = await fetch(`${BASE_URL}/config`);
+    const res = await fetchWithFallback('/config');
     return res.json();
   },
 
   async getRegions() {
-    const res = await fetch(`${BASE_URL}/regions`);
+    const res = await fetchWithFallback('/regions');
     return res.json();
   },
 
@@ -34,14 +63,14 @@ export const api = {
     disconnected_models: string[];
     predictions: PredictionDetail[];
   }> {
-    const res = await fetch(`${BASE_URL}/risk-map?lead_time_days=${leadTimeDays}&variable=${variable}&forecast_run=${forecastRun}`);
-    if (!res.ok) throw new Error('Failed to fetch risk map');
+    const res = await fetchWithFallback(`/risk-map?lead_time_days=${leadTimeDays}&variable=${variable}&forecast_run=${forecastRun}`);
+    if (!res.ok) throw new Error(`Failed to fetch risk map: HTTP ${res.status}`);
     return res.json();
   },
 
   async getPriorityQueue(leadTimeDays: number = 5, variable: string = 'precipitation_mm_day'): Promise<PriorityQueueItem[]> {
-    const res = await fetch(`${BASE_URL}/priority?lead_time_days=${leadTimeDays}&variable=${variable}`);
-    if (!res.ok) throw new Error('Failed to fetch priority queue');
+    const res = await fetchWithFallback(`/priority?lead_time_days=${leadTimeDays}&variable=${variable}`);
+    if (!res.ok) throw new Error(`Failed to fetch priority queue: HTTP ${res.status}`);
     return res.json();
   },
 
@@ -50,60 +79,60 @@ export const api = {
     governance: any;
     baselines: any;
   }> {
-    const res = await fetch(`${BASE_URL}/predictions/${predictionId}?lead_time_days=${leadTimeDays}`);
-    if (!res.ok) throw new Error('Failed to fetch prediction detail');
+    const res = await fetchWithFallback(`/predictions/${predictionId}?lead_time_days=${leadTimeDays}`);
+    if (!res.ok) throw new Error(`Failed to fetch prediction detail: HTTP ${res.status}`);
     return res.json();
   },
 
   async getHistoricalEvents(): Promise<HistoricalReplayEvent[]> {
-    const res = await fetch(`${BASE_URL}/events`);
-    if (!res.ok) throw new Error('Failed to fetch historical events');
+    const res = await fetchWithFallback('/events');
+    if (!res.ok) throw new Error(`Failed to fetch historical events: HTTP ${res.status}`);
     return res.json();
   },
 
   async getHistoricalEventDetail(eventId: string): Promise<HistoricalReplayEvent> {
-    const res = await fetch(`${BASE_URL}/events/${eventId}`);
-    if (!res.ok) throw new Error('Failed to fetch event detail');
+    const res = await fetchWithFallback(`/events/${eventId}`);
+    if (!res.ok) throw new Error(`Failed to fetch event detail: HTTP ${res.status}`);
     return res.json();
   },
 
   async getModelMetrics(): Promise<any> {
-    const res = await fetch(`${BASE_URL}/model/metrics`);
-    if (!res.ok) throw new Error('Failed to fetch model metrics');
+    const res = await fetchWithFallback('/model/metrics');
+    if (!res.ok) throw new Error(`Failed to fetch model metrics: HTTP ${res.status}`);
     return res.json();
   },
 
   async getRealtimeDisagreement(leadTimeDays: number = 5, variable: string = 'precipitation_mm_day'): Promise<any> {
-    const res = await fetch(`${BASE_URL}/realtime/disagreement?lead_time_days=${leadTimeDays}&variable=${variable}`);
-    if (!res.ok) throw new Error('Failed to fetch realtime disagreement');
+    const res = await fetchWithFallback(`/realtime/disagreement?lead_time_days=${leadTimeDays}&variable=${variable}`);
+    if (!res.ok) throw new Error(`Failed to fetch realtime disagreement: HTTP ${res.status}`);
     return res.json();
   },
 
   async getMonitoringStatus(): Promise<SystemMonitoringStatus> {
-    const res = await fetch(`${BASE_URL}/monitoring`);
-    if (!res.ok) throw new Error('Failed to fetch monitoring status');
+    const res = await fetchWithFallback('/monitoring');
+    if (!res.ok) throw new Error(`Failed to fetch monitoring status: HTTP ${res.status}`);
     return res.json();
   },
 
   async submitFeedback(data: any): Promise<ForecasterFeedbackRecord> {
-    const res = await fetch(`${BASE_URL}/feedback`, {
+    const res = await fetchWithFallback('/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('Failed to submit feedback');
+    if (!res.ok) throw new Error(`Failed to submit feedback: HTTP ${res.status}`);
     return res.json();
   },
 
   async getFeedbackList(): Promise<ForecasterFeedbackRecord[]> {
-    const res = await fetch(`${BASE_URL}/feedback`);
-    if (!res.ok) throw new Error('Failed to fetch feedback');
+    const res = await fetchWithFallback('/feedback');
+    if (!res.ok) throw new Error(`Failed to fetch feedback: HTTP ${res.status}`);
     return res.json();
   },
 
   async getRegionLeadMatrix(variable: string = 'precipitation_mm_day', forecastRun: string = '2024-07-15T00:00:00Z') {
-    const res = await fetch(`${BASE_URL}/matrix/region-lead?variable=${variable}&forecast_run=${forecastRun}`);
-    if (!res.ok) throw new Error('Failed to fetch region lead matrix');
+    const res = await fetchWithFallback(`/matrix/region-lead?variable=${variable}&forecast_run=${forecastRun}`);
+    if (!res.ok) throw new Error(`Failed to fetch region lead matrix: HTTP ${res.status}`);
     return res.json();
   }
 };

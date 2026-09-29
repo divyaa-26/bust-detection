@@ -133,11 +133,33 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
         }
       });
 
-      // Setup Click & Hover Events
-      map.current.on('click', 'subdivisions-fill', (e) => {
+      // Setup Click & Hover Events on all subdivision layers
+      const handleRegionClick = (e: any) => {
         if (e.features && e.features[0]) {
-          const subId = e.features[0].properties.subdivision_id;
-          onSelectRegion(subId);
+          const props = e.features[0].properties;
+          const subId = props?.subdivision_id || e.features[0].id;
+          if (subId) {
+            onSelectRegion(subId);
+          }
+        }
+      };
+
+      map.current.on('click', 'subdivisions-fill', handleRegionClick);
+      map.current.on('click', 'subdivisions-outline', handleRegionClick);
+      map.current.on('click', 'subdivisions-selected-outline', handleRegionClick);
+
+      // Generic click fallback
+      map.current.on('click', (e) => {
+        if (!map.current) return;
+        const features = map.current.queryRenderedFeatures(e.point, {
+          layers: ['subdivisions-fill', 'subdivisions-outline', 'subdivisions-selected-outline']
+        });
+        if (features && features.length > 0) {
+          const props = features[0].properties;
+          const subId = props?.subdivision_id || features[0].id;
+          if (subId) {
+            onSelectRegion(subId);
+          }
         }
       });
 
@@ -259,8 +281,8 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
           </div>
         )}
         <div className="pt-2 mt-2 border-t border-slate-800 text-[10px] space-y-1">
-          <div className="text-amber-400 font-bold tracking-tight">
-            PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED
+          <div className="text-emerald-400 font-bold tracking-tight">
+            REAL MODEL OUTPUT — LIGHTGBM + ISOTONIC CALIBRATION
           </div>
           <div className="text-slate-500">
             Source: IMD 36 Subdivisions • MapLibre GL
