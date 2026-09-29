@@ -103,22 +103,25 @@ export const Layout: React.FC<LayoutProps> = ({
               { step: 5, label: '5. Jump T-1' },
               { step: 6, label: '6. +143mm Bust' },
               { step: 7, label: '7. GFS vs AIFS' }
-            ].map(({ step, label }) => (
-              <button
-                key={step}
-                onClick={() => onExecuteDemoStep(step)}
-                className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
-                  activeDemoStep === step
-                    ? 'bg-primary-container text-on-primary-container shadow-sm'
-                    : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+            ].map(({ step, label }) => {
+              const isActive = activeDemoStep === step;
+              return (
+                <button
+                  key={step}
+                  onClick={() => onExecuteDemoStep(step)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
+                    isActive
+                      ? 'bg-sky-500 text-white font-bold shadow-md shadow-sky-500/30'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
             <button
-              onClick={() => onExecuteDemoStep((activeDemoStep % 7) + 1)}
-              className="p-1 rounded bg-surface-container hover:bg-surface-container-high text-primary"
+              onClick={() => onExecuteDemoStep(((activeDemoStep || 0) % 7) + 1)}
+              className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-400"
               title="Next Step"
             >
               <ChevronRight className="w-3 h-3" />

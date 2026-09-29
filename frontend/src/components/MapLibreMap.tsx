@@ -30,7 +30,7 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
       .catch((err) => console.error('Failed to load subdivisions GeoJSON:', err));
   }, []);
 
-  // 2. Initialize MapLibre
+  // 2. Initialize MapLibre & Container ResizeObserver
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
@@ -48,9 +48,28 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
 
     map.current.on('load', () => {
       setMapLoaded(true);
+      if (map.current) {
+        map.current.resize();
+      }
     });
 
+    const resizeObserver = new ResizeObserver(() => {
+      if (map.current) {
+        map.current.resize();
+      }
+    });
+    resizeObserver.observe(mapContainer.current);
+
+    const handleWindowResize = () => {
+      if (map.current) {
+        map.current.resize();
+      }
+    };
+    window.addEventListener('resize', handleWindowResize);
+
     return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', handleWindowResize);
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -225,8 +244,8 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full min-h-[500px] rounded-xl overflow-hidden border border-slate-800 bg-[#0B1120] shadow-inner">
-      <div ref={mapContainer} className="w-full h-full" />
+    <div className="relative w-full h-full min-h-[500px] rounded-xl overflow-hidden border border-slate-800 bg-[#0B1120] shadow-inner flex flex-col">
+      <div ref={mapContainer} className="w-full h-full min-h-[500px] flex-1" style={{ minHeight: '500px', width: '100%', height: '100%' }} />
 
       {/* Floating Map Legend */}
       <div className="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-lg p-3 text-[11px] shadow-xl z-10 font-mono">

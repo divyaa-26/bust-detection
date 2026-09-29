@@ -286,11 +286,16 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
         {/* Historical Atmospheric Analogues & Error Behavior */}
         <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-            <div className="flex items-center space-x-1.5 text-sky-400">
+            <div className="flex items-center space-x-1.5 text-amber-400">
               <TrendingUp className="w-4 h-4" />
-              <h4 className="font-bold text-xs uppercase tracking-wider">Historical Precedent & Error Behavior</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider">Historical / Analogue Reference</h4>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono">KNN Feature Space</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">
+              PAST REFERENCE CASES (NOT CURRENT ML OUTPUT)
+            </span>
+          </div>
+          <div className="text-[10px] text-slate-400 mb-2 leading-relaxed">
+            Historical precedent retrieved from past monsoon seasons via KNN synoptic matching. Error numbers reflect historical observed outcomes, not the current forecast.
           </div>
 
           {/* Analogue Error Statistics Summary Banner */}

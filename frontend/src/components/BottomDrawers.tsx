@@ -32,25 +32,31 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
   const [isLoadingMatrix, setIsLoadingMatrix] = useState(false);
   const [modelMetrics, setModelMetrics] = useState<any>(null);
 
+  // Prefetch matrix and model metrics on mount for instant tab switching
   useEffect(() => {
-    if ((activeTab === 'matrix' || activeTab === 'degradation') && !matrixData) {
-      setIsLoadingMatrix(true);
-      api.getRegionLeadMatrix()
-        .then((data) => {
-          setMatrixData(data);
-          setIsLoadingMatrix(false);
-        })
-        .catch((err) => {
-          console.error("Error loading matrix:", err);
-          setIsLoadingMatrix(false);
-        });
-    }
-    if ((activeTab === 'comparison' || activeTab === 'provenance') && !modelMetrics) {
-      api.getModelMetrics()
-        .then((data) => setModelMetrics(data))
-        .catch((err) => console.error("Error loading model metrics:", err));
-    }
-  }, [activeTab, matrixData, modelMetrics]);
+    setIsLoadingMatrix(true);
+    api.getRegionLeadMatrix()
+      .then((data) => {
+        setMatrixData(data);
+        setIsLoadingMatrix(false);
+      })
+      .catch((err) => {
+        console.error("Error loading matrix:", err);
+        setIsLoadingMatrix(false);
+      });
+
+    api.getModelMetrics()
+      .then((data) => setModelMetrics(data))
+      .catch((err) => console.error("Error loading model metrics:", err));
+  }, []);
+
+  // Trigger window resize event when drawer tabs or expansion state changes so MapLibre redraws
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [activeTab, isExpanded]);
 
   return (
     <div className="bg-[#111827] border-t border-slate-800 shadow-2xl transition-all duration-300">
@@ -274,43 +280,50 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                 <span className="font-semibold">
                   Forecast Reliability Decay Curve: {selectedPrediction ? selectedPrediction.region_name : 'Selected Region'}
                 </span>
-                <span className="font-mono text-slate-400">Horizon: D+1 to D+10</span>
+                <span className="font-mono text-slate-400 text-[11px]">Source: Real LightGBM Model via /api/matrix/region-lead</span>
               </div>
               
-              <div className="grid grid-cols-10 gap-2 text-center text-xs">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((day) => {
-                  const isCurrent = day === leadTimeDays;
-                  const regCell = matrixData?.matrix?.find(
-                    (c) => c.region_id === (selectedPrediction?.region_id || 'SUB_22') && c.lead_time_days === day
-                  );
-                  const estimatedRisk = regCell !== undefined
-                    ? Math.round(regCell.bust_probability * 100)
-                    : Math.min(94, Math.round(18 + Math.pow(day, 1.45) * 2.8));
-                  return (
-                    <div
-                      key={day}
-                      className={`p-2.5 rounded-lg border flex flex-col justify-between ${
-                        isCurrent
-                          ? 'bg-sky-500/20 border-sky-400 text-sky-300'
-                          : 'bg-slate-900 border-slate-800 text-slate-300'
-                      }`}
-                    >
-                      <div className="font-mono text-[10px] text-slate-400">D+{day}</div>
-                      <div className="my-2 h-16 bg-slate-950 rounded flex items-end p-1 justify-center">
-                        <div
-                          className={`w-full rounded transition-all duration-300 ${
-                            estimatedRisk > 70 ? 'bg-red-500' :
-                            estimatedRisk > 45 ? 'bg-orange-400' : 'bg-emerald-400'
-                          }`}
-                          style={{ height: `${estimatedRisk}%` }}
-                        />
+              {isLoadingMatrix || !matrixData ? (
+                <div className="py-8 text-center text-slate-500 text-xs animate-pulse">
+                  Loading real-model D+1 to D+10 decay curve from /api/matrix/region-lead...
+                </div>
+              ) : (
+                <div className="grid grid-cols-10 gap-2 text-center text-xs">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((day) => {
+                    const isCurrent = day === leadTimeDays;
+                    const regCell = matrixData.matrix.find(
+                      (c) => c.region_id === (selectedPrediction?.region_id || 'SUB_22') && c.lead_time_days === day
+                    );
+                    const estimatedRisk = regCell !== undefined
+                      ? Math.round(regCell.bust_probability * 100)
+                      : 0;
+                    return (
+                      <div
+                        key={day}
+                        className={`p-2.5 rounded-lg border flex flex-col justify-between ${
+                          isCurrent
+                            ? 'bg-sky-500/20 border-sky-400 text-sky-300'
+                            : 'bg-slate-900 border-slate-800 text-slate-300'
+                        }`}
+                      >
+                        <div className="font-mono text-[10px] text-slate-400">D+{day}</div>
+                        <div className="my-2 h-16 bg-slate-950 rounded flex items-end p-1 justify-center">
+                          <div
+                            className={`w-full rounded transition-all duration-300 ${
+                              estimatedRisk > 70 ? 'bg-red-500' :
+                              estimatedRisk > 45 ? 'bg-orange-400' :
+                              estimatedRisk >= 25 ? 'bg-amber-400' : 'bg-emerald-400'
+                            }`}
+                            style={{ height: `${Math.max(4, estimatedRisk)}%` }}
+                          />
+                        </div>
+                        <div className="font-bold text-[11px] font-mono">{estimatedRisk}%</div>
+                        <div className="text-[9px] text-slate-500 mt-0.5">P(Bust)</div>
                       </div>
-                      <div className="font-bold text-[11px] font-mono">{estimatedRisk}%</div>
-                      <div className="text-[9px] text-slate-500 mt-0.5">P(Bust)</div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
