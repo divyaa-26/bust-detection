@@ -12,6 +12,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Navbar } from './components/Navbar';
+import { Layout } from './components/Layout';
 import { MapLibreMap } from './components/MapLibreMap';
 import { WhyDistrustPanel } from './components/WhyDistrustPanel';
 import { BottomDrawers } from './components/BottomDrawers';
@@ -112,63 +113,20 @@ export const App: React.FC = () => {
   const selectedPrediction = predictions.find((p) => p.region_id === selectedRegionId) || predictions[0] || null;
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
-      {/* Top Navbar */}
-      <Navbar
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-        dataMode={dataMode}
-        setDataMode={setDataMode}
-        initTime={forecastRun.slice(0, 10) + ' 00 UTC'}
-      />
-
-      {/* SIH 2026 Primary Presentation Stepper */}
-      <div className="bg-[#0f172a] border-b border-slate-800 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div className="flex items-center space-x-2">
-          <span className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 font-mono text-[10px] uppercase">
-            <Sparkles className="w-3 h-3 text-emerald-400" />
-            <span>SIH 2026 Evaluation Flow</span>
-          </span>
-          <span className="hidden sm:inline text-slate-400 text-xs">Quick Evaluation Stepper:</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-1.5">
-          {[
-            { step: 1, label: '1. Dashboard (D+5)' },
-            { step: 2, label: '2. Replay T-5 (Biparjoy)' },
-            { step: 3, label: '3. Inspect Saurashtra (SUB_22)' },
-            { step: 4, label: '4. Why Distrust?' },
-            { step: 5, label: '5. Jump to T-1' },
-            { step: 6, label: '6. Reveal Outcome (+143mm)' },
-            { step: 7, label: '7. Real GFS vs AIFS ⚡' }
-          ].map(({ step, label }) => (
-            <button
-              key={step}
-              onClick={() => executeDemoStep(step)}
-              className={`px-2.5 py-1 rounded text-[11px] font-semibold transition ${
-                activeDemoStep === step
-                  ? 'bg-sky-500 text-white shadow-sm shadow-sky-500/30'
-                  : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-          <button
-            onClick={() => executeDemoStep((activeDemoStep % 7) + 1)}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-400 border border-sky-500/30 text-[11px] font-bold"
-            title="Advance to next evaluation step"
-          >
-            <span>Next</span>
-            <ChevronRight className="w-3 h-3" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Container */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {currentTab === 'dashboard' && (
-          <div className="flex-1 flex flex-col p-3 space-y-3">
+    <Layout
+      currentTab={currentTab}
+      setCurrentTab={setCurrentTab}
+      leadTimeDays={leadTimeDays}
+      setLeadTimeDays={setLeadTimeDays}
+      dataMode={dataMode}
+      setDataMode={setDataMode}
+      initTime={forecastRun.slice(0, 10) + ' 00 UTC'}
+      activeDemoStep={activeDemoStep}
+      onExecuteDemoStep={executeDemoStep}
+    >
+      {/* View 1: Main Dashboard */}
+      {currentTab === 'dashboard' && (
+        <div className="flex-1 flex flex-col space-y-3">
             {/* Top Operational Bar */}
             <div className="bg-[#111827] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs shadow-md">
               <div className="flex items-center space-x-3">
@@ -333,8 +291,7 @@ export const App: React.FC = () => {
 
         {/* View 10: Today's Real Forecast Disagreement */}
         {currentTab === 'realtime_disagreement' && <RealtimeDisagreementView />}
-      </main>
-    </div>
+    </Layout>
   );
 };
 

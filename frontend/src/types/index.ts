@@ -1,4 +1,5 @@
 export type DataMode = 'REAL' | 'REPLAY' | 'DEMO';
+export type Mode = DataMode;
 
 export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'SEVERE';
 
@@ -47,6 +48,8 @@ export interface ShapAttribution {
   direction: 'INCREASES_BUST_RISK' | 'REDUCES_BUST_RISK';
   feature_input_value: number;
 }
+
+export type Prediction = PredictionDetail;
 
 export interface PredictionDetail {
   prediction_id: string;
