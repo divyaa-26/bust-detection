@@ -140,107 +140,106 @@ export const App: React.FC = () => {
     >
       {/* View 1: Main Dashboard */}
       {currentTab === 'dashboard' && (
-        <div className="flex-1 flex flex-col space-y-3">
-            {/* Top Operational Bar */}
-            <div className="bg-[#111827] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs shadow-md">
-              <div className="flex items-center space-x-3">
-                <span className="font-bold text-slate-300 flex items-center space-x-1.5 font-mono uppercase tracking-wider text-[11px]">
-                  <Sliders className="w-3.5 h-3.5 text-sky-400" />
-                  <span>Lead Horizon Scrubber:</span>
-                </span>
-                <div className="flex items-center space-x-1">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => setLeadTimeDays(d)}
-                      className={`px-2.5 py-1 rounded text-xs font-mono font-bold transition ${
-                        leadTimeDays === d
-                          ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
-                          : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
-                      }`}
-                    >
-                      D+{d}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Variable Selector */}
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-slate-400 font-mono text-[11px]">VARIABLE:</span>
-                  <select
-                    value={forecastVariable}
-                    onChange={(e) => setForecastVariable(e.target.value)}
-                    className="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
+        <div className="h-full w-full flex flex-col overflow-hidden min-h-0 space-y-2">
+          {/* Top Operational Bar */}
+          <div className="bg-[#111827] border border-slate-800 rounded-xl px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs shadow-md shrink-0">
+            <div className="flex items-center space-x-3">
+              <span className="font-bold text-slate-300 flex items-center space-x-1.5 font-mono uppercase tracking-wider text-[11px]">
+                <Sliders className="w-3.5 h-3.5 text-sky-400" />
+                <span>Lead Horizon:</span>
+              </span>
+              <div className="flex items-center space-x-1">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setLeadTimeDays(d)}
+                    className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition ${
+                      leadTimeDays === d
+                        ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
+                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+                    }`}
                   >
-                    <option value="precipitation_mm_day">Precipitation (mm/day)</option>
-                    <option value="temperature_2m_c">2m Temperature (°C)</option>
-                    <option value="wind_speed_10m_kmh">10m Wind Speed (km/h)</option>
-                  </select>
-                </div>
-
-                {/* Risk Layer Selector */}
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-slate-400 font-mono text-[11px]">MAP LAYER:</span>
-                  <select
-                    value={activeLayer}
-                    onChange={(e) => setActiveLayer(e.target.value)}
-                    className="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
-                  >
-                    <option value="bust_probability">Calibrated Bust Risk P(Bust) (0–100%)</option>
-                    <option value="ensemble_spread">NWP Ensemble Spread (mm)</option>
-                    <option value="model_disagreement">Inter-Model Disagreement (mm)</option>
-                    <option value="forecast_value">Forecast Raw Value (mm/day)</option>
-                  </select>
-                </div>
-
-                <button
-                  onClick={loadData}
-                  disabled={isLoading}
-                  className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
-                  title="Refresh Forecast Run"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
-                </button>
+                    D+{d}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Core Map & Right Diagnostic Split */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-3 min-h-[500px]">
-              {/* Left Controls & Map (8 Cols) */}
-              <div className="lg:col-span-8 flex flex-col space-y-2">
-                <div className="flex-1 relative">
-                  <MapLibreMap
-                    predictions={predictions}
-                    selectedRegionId={selectedRegionId}
-                    onSelectRegion={setSelectedRegionId}
-                    activeLayer={activeLayer}
-                    leadTimeDays={leadTimeDays}
-                  />
-                </div>
+            {/* Variable & Risk Layer Selectors */}
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-1.5">
+                <span className="text-slate-400 font-mono text-[11px]">VAR:</span>
+                <select
+                  value={forecastVariable}
+                  onChange={(e) => setForecastVariable(e.target.value)}
+                  className="bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
+                >
+                  <option value="precipitation_mm_day">Precipitation (mm/day)</option>
+                  <option value="temperature_2m_c">2m Temperature (°C)</option>
+                  <option value="wind_speed_10m_kmh">10m Wind Speed (km/h)</option>
+                </select>
               </div>
 
-              {/* Right Panel: WHY DISTRUST THIS FORECAST? (4 Cols) */}
-              <div className="lg:col-span-4 h-full">
-                <WhyDistrustPanel
-                  prediction={selectedPrediction}
-                  onFeedbackSubmitted={loadData}
+              <div className="flex items-center space-x-1.5">
+                <span className="text-slate-400 font-mono text-[11px]">LAYER:</span>
+                <select
+                  value={activeLayer}
+                  onChange={(e) => setActiveLayer(e.target.value)}
+                  className="bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
+                >
+                  <option value="bust_probability">Calibrated Bust Risk P(Bust) (0–100%)</option>
+                  <option value="ensemble_spread">NWP Ensemble Spread (mm)</option>
+                  <option value="model_disagreement">Inter-Model Disagreement (mm)</option>
+                  <option value="forecast_value">Forecast Raw Value (mm/day)</option>
+                </select>
+              </div>
+
+              <button
+                onClick={loadData}
+                disabled={isLoading}
+                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                title="Refresh Forecast Run"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Core Map & Right Diagnostic Split */}
+          <div className="flex-1 flex flex-col lg:flex-row gap-2.5 min-h-0 overflow-hidden">
+            {/* Center Map Workspace */}
+            <div className="flex-1 min-w-0 h-full flex flex-col min-h-0 overflow-hidden relative">
+              <div className="flex-1 min-h-0 relative rounded-xl overflow-hidden border border-slate-800 shadow-md">
+                <MapLibreMap
+                  predictions={predictions}
+                  selectedRegionId={selectedRegionId}
+                  onSelectRegion={setSelectedRegionId}
+                  activeLayer={activeLayer}
+                  leadTimeDays={leadTimeDays}
                 />
               </div>
             </div>
 
-            {/* Bottom Drawer (Priority Queue, Degradation, Baselines, Provenance) */}
-            <div className="w-full">
-              <BottomDrawers
-                priorityQueue={priorityQueue}
-                selectedPrediction={selectedPrediction}
-                onSelectRegion={setSelectedRegionId}
-                leadTimeDays={leadTimeDays}
+            {/* Right Panel: WHY DISTRUST THIS FORECAST? (390px - 420px, internal scroll only) */}
+            <div className="w-full lg:w-[390px] xl:w-[420px] shrink-0 h-full flex flex-col min-h-0 overflow-hidden">
+              <WhyDistrustPanel
+                prediction={selectedPrediction}
+                onFeedbackSubmitted={loadData}
               />
             </div>
           </div>
-        )}
+
+          {/* Bottom Drawer (Priority Queue, Degradation, Baselines, Provenance) */}
+          <div className="w-full shrink-0">
+            <BottomDrawers
+              priorityQueue={priorityQueue}
+              selectedPrediction={selectedPrediction}
+              onSelectRegion={setSelectedRegionId}
+              leadTimeDays={leadTimeDays}
+            />
+          </div>
+        </div>
+      )}
 
         {/* View 2: Full Screen Reliability Map */}
         {currentTab === 'risk_map' && (

@@ -33,12 +33,12 @@ export const RealtimeDisagreementView: React.FC = () => {
               {data?.is_live_external ? 'LIVE EXTERNAL DATA (OPEN-METEO)' : 'VERIFIED MULTI-MODEL DATASET'}
             </span>
             <h2 className="text-xl font-bold text-slate-100">
-              {data?.is_live_external ? "Today's Real Forecast Disagreement" : "Multi-Model Forecast Disagreement (Verified Archive)"}
+              {data?.is_live_external ? "Operational Forecast Disagreement" : "Multi-Model Forecast Disagreement (Verified Archive)"}
             </h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">
             {data?.is_live_external
-              ? 'Real-time inter-comparison of live external forecast models (NOAA GFS vs ECMWF AIFS).'
+              ? 'Inter-comparison of live external forecast models (NOAA GFS vs ECMWF AIFS).'
               : 'Subdivision-level inter-comparison of verified NOAA GFS vs ECMWF AIFS operational runs across India.'}
           </p>
         </div>
@@ -109,7 +109,7 @@ export const RealtimeDisagreementView: React.FC = () => {
             <AlertOctagon className="w-5 h-5 text-amber-400" />
             <div>
               <div className="font-bold text-slate-100 text-sm">
-                Highest Inter-Model Divergence: {data.max_discrepancy_region} (D+{leadTimeDays})
+                Largest GFS–AIFS Difference: {data.max_discrepancy_region} (D+{leadTimeDays})
               </div>
               <p className="text-slate-300 text-[11px] mt-0.5">
                 Physical NWP (GFS) and Data-Driven AI (AIFS) disagree by <strong>{data.max_discrepancy_mm} mm/day</strong> over this subdivision.
@@ -128,7 +128,9 @@ export const RealtimeDisagreementView: React.FC = () => {
           <h3 className="font-bold text-sm text-slate-200 uppercase tracking-wider font-mono">
             All 36 Subdivisions Model Comparison (GFS vs AIFS)
           </h3>
-          <span className="text-xs font-mono text-slate-400">Cycle: {data?.reference_run_utc}</span>
+          <span className="text-xs font-mono text-slate-400">
+            Forecast Cycle: {data?.reference_run_utc ? data.reference_run_utc.replace("T00:00:00Z", " 00 UTC") : "2024-07-15 00 UTC"}
+          </span>
         </div>
 
         <div className="overflow-x-auto max-h-96">

@@ -50,6 +50,7 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
       setMapLoaded(true);
       if (map.current) {
         map.current.resize();
+        map.current.fitBounds([[68.1, 8.1], [97.4, 36.5]], { padding: 25, duration: 0 });
       }
     });
 
@@ -117,6 +118,7 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
         type: 'geojson',
         data: enrichedGeoJSON
       });
+      map.current.fitBounds([[68.1, 8.1], [97.4, 36.5]], { padding: 25, duration: 0 });
 
       // Add Choropleth Fill Layer
       map.current.addLayer({
@@ -244,8 +246,8 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full min-h-[500px] rounded-xl overflow-hidden border border-slate-800 bg-[#0B1120] shadow-inner flex flex-col">
-      <div ref={mapContainer} className="w-full h-full min-h-[500px] flex-1" style={{ minHeight: '500px', width: '100%', height: '100%' }} />
+    <div className="relative w-full h-full min-h-0 rounded-xl overflow-hidden border border-slate-800 bg-[#0B1120] shadow-inner flex flex-col">
+      <div ref={mapContainer} className="w-full h-full min-h-0 flex-1" style={{ width: '100%', height: '100%' }} />
 
       {/* Floating Map Legend */}
       <div className="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-lg p-3 text-[11px] shadow-xl z-10 font-mono">

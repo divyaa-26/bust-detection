@@ -44,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'dashboard', label: 'Dashboard', icon: Layers },
     { id: 'risk_map', label: 'Reliability Map', icon: ShieldAlert },
     { id: 'replay', label: 'Counterfactual Replay', icon: History },
-    { id: 'realtime_disagreement', label: "Today's Real Disagreement", icon: Radio },
+    { id: 'realtime_disagreement', label: 'Multi-Model Disagreement', icon: Radio },
     { id: 'case_studies', label: 'Case Studies', icon: Radio },
     { id: 'methodology', label: 'Model & Baselines', icon: Cpu },
     { id: 'validation', label: 'Calibration & Metrics', icon: CheckCircle2 },

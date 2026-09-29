@@ -42,7 +42,7 @@ export const Layout: React.FC<LayoutProps> = ({
 }) => {
   const navItems = [
     { id: 'dashboard', label: 'Main Dashboard', badge: 'MAP', badgeColor: 'text-primary bg-surface-container', icon: Map },
-    { id: 'realtime_disagreement', label: 'Realtime Disagreement', badge: 'LIVE-SYNC', badgeColor: 'text-primary-fixed bg-surface-container', icon: Radio },
+    { id: 'realtime_disagreement', label: 'Multi-Model Disagreement', badge: dataMode === 'REAL' ? 'LIVE' : 'VERIFIED', badgeColor: 'text-primary-fixed bg-surface-container', icon: Radio },
     { id: 'replay', label: 'Historical Replay & Bust Archives', badge: 'ARCHIVE', badgeColor: 'text-tertiary-fixed-dim bg-surface-container', icon: History },
     { id: 'case_studies', label: 'Event Case Studies', badge: 'CASE', badgeColor: 'text-sky-300 bg-sky-950/40', icon: BookOpen },
     { id: 'validation', label: 'Governance & Validation', badge: 'AUDIT', badgeColor: 'text-emerald-400 bg-emerald-950/40', icon: BarChart2 },
@@ -53,7 +53,7 @@ export const Layout: React.FC<LayoutProps> = ({
   ];
 
   return (
-    <div className="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col">
+    <div className={`bg-background font-body-md text-on-surface antialiased flex flex-col ${currentTab === 'dashboard' ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
       {/* Top Persistent Model Status Banner */}
       {currentTab === 'replay' ? (
         <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-1 text-center font-mono text-[10px] text-amber-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
@@ -157,7 +157,7 @@ export const Layout: React.FC<LayoutProps> = ({
       </header>
 
       {/* Main Container with Contributor Workstation Rail Sidebar */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Left Sidebar: Avi's Workstation Rail / Atmospheric HUD */}
         <aside className="w-64 bg-surface-container-lowest border-r border-outline-variant flex flex-col shrink-0 z-40 shadow-xl">
           <div className="px-4 py-3 border-b border-outline-variant flex flex-col">
@@ -219,7 +219,7 @@ export const Layout: React.FC<LayoutProps> = ({
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-background p-3">
+        <main className={`flex-1 bg-background ${currentTab === 'dashboard' ? 'overflow-hidden flex flex-col min-h-0 p-2 sm:p-3' : 'overflow-y-auto p-3'}`}>
           {children}
         </main>
       </div>

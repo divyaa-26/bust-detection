@@ -27,10 +27,15 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
   leadTimeDays
 }) => {
   const [activeTab, setActiveTab] = useState<'priority' | 'matrix' | 'degradation' | 'comparison' | 'provenance'>('priority');
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [matrixData, setMatrixData] = useState<RegionLeadMatrixResponse | null>(null);
   const [isLoadingMatrix, setIsLoadingMatrix] = useState(false);
   const [modelMetrics, setModelMetrics] = useState<any>(null);
+
+  const handleTabClick = (tab: 'priority' | 'matrix' | 'degradation' | 'comparison' | 'provenance') => {
+    setActiveTab(tab);
+    setIsExpanded(true);
+  };
 
   // Prefetch matrix and model metrics on mount for instant tab switching
   useEffect(() => {
@@ -64,9 +69,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
       <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/60">
         <div className="flex items-center space-x-2 overflow-x-auto">
           <button
-            onClick={() => setActiveTab('priority')}
+            onClick={() => handleTabClick('priority')}
             className={`px-3 py-1 rounded text-xs font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
-              activeTab === 'priority'
+              activeTab === 'priority' && isExpanded
                 ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -76,9 +81,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab('matrix')}
+            onClick={() => handleTabClick('matrix')}
             className={`px-3 py-1 rounded text-xs font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
-              activeTab === 'matrix'
+              activeTab === 'matrix' && isExpanded
                 ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -88,9 +93,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab('degradation')}
+            onClick={() => handleTabClick('degradation')}
             className={`px-3 py-1 rounded text-xs font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
-              activeTab === 'degradation'
+              activeTab === 'degradation' && isExpanded
                 ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -100,9 +105,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab('comparison')}
+            onClick={() => handleTabClick('comparison')}
             className={`px-3 py-1 rounded text-xs font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
-              activeTab === 'comparison'
+              activeTab === 'comparison' && isExpanded
                 ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -112,9 +117,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveTab('provenance')}
+            onClick={() => handleTabClick('provenance')}
             className={`px-3 py-1 rounded text-xs font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
-              activeTab === 'provenance'
+              activeTab === 'provenance' && isExpanded
                 ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
@@ -126,16 +131,17 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-slate-400 hover:text-slate-200 p-1 ml-2"
+          className="flex items-center space-x-1 text-xs text-slate-300 hover:text-white px-2.5 py-1 rounded bg-slate-800/80 hover:bg-slate-700 transition ml-2 shrink-0 border border-slate-700 font-mono"
           title={isExpanded ? 'Collapse Drawer' : 'Expand Drawer'}
         >
-          {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+          <span className="text-[11px]">{isExpanded ? 'Collapse' : 'Expand Drawer'}</span>
+          {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronUp className="w-3.5 h-3.5 text-sky-400 animate-pulse" />}
         </button>
       </div>
 
       {/* Drawer Content */}
       {isExpanded && (
-        <div className="p-4 max-h-64 overflow-y-auto">
+        <div className="p-4 max-h-56 overflow-y-auto">
           {activeTab === 'priority' && (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
