@@ -110,12 +110,26 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleTabChange = (tab: string) => {
+    setCurrentTab(tab);
+    if (tab === 'dashboard' || tab === 'risk_map') {
+      setActiveDemoStep(1);
+    } else if (tab === 'replay') {
+      setActiveDemoStep(2);
+    } else if (tab === 'realtime_disagreement') {
+      setActiveDemoStep(7);
+    } else {
+      // Supporting/audit pages: Forecaster Feedback, ML Architecture, Governance, Provenance, Providers, Case Studies
+      setActiveDemoStep(0);
+    }
+  };
+
   const selectedPrediction = predictions.find((p) => p.region_id === selectedRegionId) || predictions[0] || null;
 
   return (
     <Layout
       currentTab={currentTab}
-      setCurrentTab={setCurrentTab}
+      setCurrentTab={handleTabChange}
       leadTimeDays={leadTimeDays}
       setLeadTimeDays={setLeadTimeDays}
       dataMode={dataMode}

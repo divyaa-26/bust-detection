@@ -37,7 +37,7 @@ export const ModelMethodologyView: React.FC = () => {
     },
     { 
       title: "9. Isotonic Calibration", 
-      desc: "Non-parametric isotonic regression fitted on 2024 validation partition to guarantee frequentist reliability (ECE: 0.0152)." 
+      desc: "Non-parametric isotonic regression fitted on the 2024 validation partition; calibration quality evaluated using ECE = 0.0152." 
     },
     { 
       title: "10. TreeSHAP & Decision Priority", 
