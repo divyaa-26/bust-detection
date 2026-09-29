@@ -455,14 +455,14 @@ def get_realtime_forecast_disagreement(
     Pipeline: Real external GFS fetch -> Real external AIFS fetch -> Normalization -> Disagreement -> Output.
     Graceful fallback: When external network is unreachable, reports offline status without synthesizing fake values.
     """
-    active_mode = mode or config.data_mode
-    if active_mode == DataModeEnum.REAL:
+    if mode == DataModeEnum.REAL:
         return LiveForecastFetcher.execute_live_disagreement_pipeline(
             lead_time_days=lead_time_days,
             variable=variable
         )
         
-    # In REPLAY / DEMO mode: provide verified baseline comparison
+    # Baseline multi-model comparison across all 36 subdivisions
+    active_mode = mode or config.data_mode
     gfs_grid = gfs_provider.fetch_forecast(forecast_run, lead_time_days, variable, active_mode)
     aifs_grid = aifs_provider.fetch_forecast(forecast_run, lead_time_days, variable, active_mode)
     

@@ -8,7 +8,7 @@ export const EventCaseStudiesView: React.FC = () => {
       region: "Saurashtra & Kutch (SUB_22), Gujarat",
       synoptic: "Deep cyclonic vortex over east-central Arabian Sea with recurvature uncertainty.",
       nwpError: "At D+5, global deterministic GFS predicted 42 mm. Actual observed station accumulation exceeded 185 mm in Kutch.",
-      aiAction: "Flagged Prototype Risk Score 76/100 at D+5 due to 26.5mm ensemble spread and 22mm GFS-AIFS disagreement.",
+      aiAction: "Flagged Bust Risk Score 76/100 at D+5 due to 26.5mm ensemble spread and 22mm GFS-AIFS disagreement.",
       outcome: "Forecasters alert prevented surprise flash flooding in coastal ports.",
       type: "Cyclone Landfall Bust"
     },
@@ -17,7 +17,7 @@ export const EventCaseStudiesView: React.FC = () => {
       region: "Konkan & Goa (SUB_23) & Coastal Karnataka (SUB_32)",
       synoptic: "Strong low-level westerly monsoon jet (45 knots) impinging on the Sahyadri mountains.",
       nwpError: "At D+4, coarse global models predicted 85 mm, failing to resolve sub-grid orographic convection.",
-      aiAction: "Flagged Prototype Risk Score 82/100 based on terrain-boundary vulnerability and historical analogue failure rate.",
+      aiAction: "Flagged Bust Risk Score 82/100 based on terrain-boundary vulnerability and historical analogue failure rate.",
       outcome: "Actual observed was 242 mm. Recommended forecaster review of high-resolution radar soundings.",
       type: "Orographic Convective Bust"
     },
@@ -26,7 +26,7 @@ export const EventCaseStudiesView: React.FC = () => {
       region: "Coastal Andhra Pradesh & Yanam (SUB_28) and Chennai",
       synoptic: "Cyclone drifted quasi-parallel to coast, stalling for 18 hours within 40km of shoreline.",
       nwpError: "Global models anticipated continuous northward propagation without accounting for coastal boundary friction drag.",
-      aiAction: "Ensemble spread expanded to 22mm. AI flagged Prototype Risk Score 74/100 with Critical Inspection Priority at D+4.",
+      aiAction: "Ensemble spread expanded to 22mm. AI flagged Bust Risk Score 74/100 with Critical Inspection Priority at D+4.",
       outcome: "Actual rainfall reached catastrophic 280 mm in 24 hours.",
       type: "Cyclone Stalling & Coastal Flood"
     },
@@ -35,7 +35,7 @@ export const EventCaseStudiesView: React.FC = () => {
       region: "Himachal Pradesh (SUB_15) & Uttarakhand (SUB_12)",
       synoptic: "Upper-tropospheric trough embedded in subtropical westerly jet with Arabian Sea moisture feed.",
       nwpError: "Models predicted brief light snow (18 mm liquid equivalent) at D+5; observed was 72 mm blizzard.",
-      aiAction: "Flagged Prototype Risk Score 68/100 due to steep spatial baroclinic gradient instability.",
+      aiAction: "Flagged Bust Risk Score 68/100 due to steep spatial baroclinic gradient instability.",
       outcome: "Severe travel disruption anticipated by forecaster review.",
       type: "Mid-Latitude Synoptic Trough"
     }
@@ -45,8 +45,8 @@ export const EventCaseStudiesView: React.FC = () => {
     <div className="max-w-[1700px] mx-auto p-6 space-y-6">
       <div className="pb-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
-          <span className="px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-bold text-xs uppercase border border-sky-500/30">
-            METEOROLOGICAL VERIFICATION
+          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-xs uppercase border border-amber-500/30">
+            HISTORICAL COUNTERFACTUAL ANALYSIS
           </span>
           <h2 className="text-xl font-bold text-slate-100">Historical Case Studies & Bust Diagnostics</h2>
         </div>

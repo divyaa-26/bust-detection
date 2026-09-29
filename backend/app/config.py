@@ -31,15 +31,15 @@ class AppConfig(BaseModel):
     problem_statement: str = "SIH26079 — AI-Based Forecast Bust Detection for Medium-Range Weather Forecasts"
     sponsor: str = "Ministry of Earth Sciences (MoES), Government of India"
     
-    # Active data mode: REPLAY is default demo mode, DEMO is lightweight, REAL when configured
-    data_mode: DataMode = DataMode(os.getenv("DATA_MODE", DataMode.REPLAY.value))
+    # Active data mode: REAL operational mode for real LightGBM + Isotonic model
+    data_mode: DataMode = DataMode(os.getenv("DATA_MODE", DataMode.REAL.value))
     
     # Model & schema versions for provenance & governance
-    model_version: str = "demo-reliability-v1.0.0"
-    feature_version: str = "feat-spatiotemporal-v1"
-    bust_definition_version: str = "bust-def-v1.2"
-    calibration_version: str = "calib-platt-v1"
-    dataset_version: str = "imd-gfs-regridded-0.25deg-v2"
+    model_version: str = "LightGBM-v1.0-Real-NWP-IMD-Calibrated"
+    feature_version: str = "real-feature-schema-v1.0-10audited"
+    bust_definition_version: str = "bust-def-v2.0-frozen-35mm-cat2"
+    calibration_version: str = "isotonic-regression-v1.0"
+    dataset_version: str = "expanded-real-nwp-dataset-13680pairs-v1.0"
     git_commit: str = Field(default_factory=get_git_commit)
     
     # Base paths

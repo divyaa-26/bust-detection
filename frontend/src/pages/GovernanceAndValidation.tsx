@@ -48,8 +48,10 @@ const GovernanceAndValidation: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-error-container/20 border-l-4 border-error p-space-sm rounded">
-          <span className="text-error font-bold text-xs uppercase block mb-1">PROTOTYPE NOTICE</span>
+        <div className={`${metrics.status === 'TRAINED_REAL_MODEL' ? 'bg-emerald-950/20 border-l-4 border-emerald-500' : 'bg-error-container/20 border-l-4 border-error'} p-space-sm rounded`}>
+          <span className={`${metrics.status === 'TRAINED_REAL_MODEL' ? 'text-emerald-400' : 'text-error'} font-bold text-xs uppercase block mb-1`}>
+            {metrics.status === 'TRAINED_REAL_MODEL' ? 'SCIENTIFIC PROVENANCE & DISCLOSURE' : 'PROTOTYPE NOTICE'}
+          </span>
           <p className="text-sm text-on-surface-variant italic">{metrics.honesty_notice}</p>
         </div>
       </div>

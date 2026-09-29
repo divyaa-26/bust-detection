@@ -20,14 +20,14 @@ export const GovernanceView: React.FC = () => {
       variable: "precipitation_mm_day"
     },
     governance: {
-      dataset_version: configData?.dataset_version || "imd-gfs-regridded-0.25deg-v2",
-      feature_version: configData?.feature_version || "feat-spatiotemporal-v1",
-      bust_definition_version: configData?.bust_definition_version || "bust-def-v1.2",
-      model_version: configData?.model_version || "demo-reliability-v1.0.0",
-      calibration_version: "calib-platt-v1",
+      dataset_version: configData?.dataset_version || "expanded-real-nwp-dataset-13680pairs-v1.0",
+      feature_version: configData?.feature_version || "real-feature-schema-v1.0-10audited",
+      bust_definition_version: configData?.bust_definition_version || "bust-def-v2.0-frozen-35mm-cat2",
+      model_version: configData?.model_version || "LightGBM-v1.0-Real-NWP-IMD-Calibrated",
+      calibration_version: configData?.calibration_version || "isotonic-regression-v1.0",
       git_commit: configData?.git_commit || "sih-2026-v1.0",
       inference_timestamp: new Date().toISOString(),
-      data_mode: configData?.data_mode || "REPLAY"
+      data_mode: configData?.data_mode || "REAL"
     },
     reproducibility: {
       spatial_regrid_operator: "Conservative Areal Mean (36 Subdivisions)",

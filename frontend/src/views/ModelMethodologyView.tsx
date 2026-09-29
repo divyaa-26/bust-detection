@@ -25,7 +25,7 @@ export const ModelMethodologyView: React.FC = () => {
     },
     { 
       title: "6. Frozen Bust Ground Truth", 
-      desc: "Tail-Error (90th percentile, 15 mm min) OR Category Failure (shift >= 2 IMD rainfall levels) per ForecastBustDefinition." 
+      desc: "Tail-Error: |F - O| >= 35.0 * (1 + 0.08*(d-1)) mm OR Category Shift: rank diff >= 2 OR Missed Severe: (fcst <= 1 and obs >= 3) per ForecastBustDefinition." 
     },
     { 
       title: "7. Mandatory Baselines", 
