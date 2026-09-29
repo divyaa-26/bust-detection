@@ -93,11 +93,11 @@ export const RealtimeDisagreementView: React.FC = () => {
         <div className="p-3.5 rounded-xl bg-rose-950/20 border border-rose-500/30">
           <div className="flex items-center justify-between font-bold text-rose-400 mb-1">
             <span>Model C: NCUM (MoES)</span>
-            <span className="bg-rose-500/20 px-2 py-0.5 rounded text-[10px]">EXCLUDED</span>
+            <span className="bg-rose-500/20 px-2 py-0.5 rounded text-[10px] font-mono tracking-wide">RESTRICTED ACCESS</span>
           </div>
           <p className="text-slate-300 text-[11px]">National Centre Unified Model (Restricted Access)</p>
           <div className="text-[10px] text-rose-300/80 mt-1 font-mono">
-            Scientific Honesty: Institutional credentials required; NEVER fabricated.
+            Scientific Honesty: Institutional credentials required; NEVER fabricated. NCUM data unavailable in current access tier.
           </div>
         </div>
       </div>
