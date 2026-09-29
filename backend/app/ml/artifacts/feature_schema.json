@@ -1,0 +1,17 @@
+{
+  "features": [
+    "lead_time_days",
+    "forecast_value",
+    "forecast_anomaly",
+    "ensemble_spread",
+    "inter_model_difference",
+    "spatial_gradient",
+    "consecutive_run_delta",
+    "analogue_historical_bust_rate",
+    "analogue_mean_error",
+    "is_ghats_or_coastal",
+    "season_month"
+  ],
+  "target": "bust_label",
+  "target_description": "Forecast Bust Event indicator (1 if |F - O| >= threshold or category shift >= 2 else 0)"
+}

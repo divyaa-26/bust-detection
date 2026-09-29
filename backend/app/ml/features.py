@@ -16,7 +16,11 @@ class FeatureEngineeringEngine:
         primary_grid: ForecastGrid,
         secondary_grid: Optional[ForecastGrid],
         region_id: str,
-        lead_time_days: int
+        lead_time_days: int,
+        analogue_historical_bust_rate: float = 0.086,
+        analogue_mean_error: float = 12.0,
+        consecutive_run_delta: float = 0.0,
+        season_month: Optional[int] = None
     ) -> ModelFeatures:
         fcst_val = primary_grid.subdivision_values.get(region_id, 0.0)
         spread_val = primary_grid.ensemble_spread.get(region_id, 4.0)
@@ -37,6 +41,20 @@ class FeatureEngineeringEngine:
 
         # Spatial gradient / neighborhood contrast indicator
         spatial_gradient = round(abs(fcst_val - climo) * 0.45, 2)
+        
+        # Determine month
+        month = season_month
+        if month is None and hasattr(primary_grid, "init_time") and primary_grid.init_time:
+            try:
+                month = int(primary_grid.init_time[5:7])
+            except Exception:
+                month = 7
+        if month is None:
+            month = 7
+
+        # Dynamic estimate for consecutive run delta if not provided
+        if consecutive_run_delta == 0.0 and diff > 0:
+            consecutive_run_delta = round(diff * 0.4, 1)
 
         return ModelFeatures(
             region_id=region_id,
@@ -46,5 +64,9 @@ class FeatureEngineeringEngine:
             inter_model_difference=round(diff, 1),
             climatological_mean=round(climo, 1),
             spatial_gradient=spatial_gradient,
-            is_ghats_or_coastal=is_ghats_or_coastal
+            is_ghats_or_coastal=is_ghats_or_coastal,
+            consecutive_run_delta=consecutive_run_delta,
+            analogue_historical_bust_rate=round(analogue_historical_bust_rate, 3),
+            analogue_mean_error=round(analogue_mean_error, 1),
+            season_month=month
         )

@@ -115,41 +115,75 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Persistent Visible Prototype Badge */}
-        <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/40 text-amber-300 text-center font-mono text-[10px] font-bold tracking-wider uppercase flex items-center justify-center space-x-1.5">
-          <AlertOctagon className="w-3.5 h-3.5 text-amber-400" />
-          <span>PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED</span>
+        {/* Model Badge */}
+        <div className={`p-2 rounded-lg border text-center font-mono text-[10px] font-bold tracking-wider uppercase flex items-center justify-center space-x-1.5 ${
+          prediction.confidence_tier === 'Trained & Calibrated'
+            ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
+            : 'bg-amber-500/10 border-amber-500/40 text-amber-300'
+        }`}>
+          <AlertOctagon className="w-3.5 h-3.5" />
+          <span>{prediction.prototype_badge || "CALIBRATED ML MODEL (LightGBM + Isotonic)"}</span>
         </div>
 
-        {/* Core Risk Metrics Grid */}
-        <div className="grid grid-cols-2 gap-2.5">
-          <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
-            <div className="text-[10px] uppercase tracking-wider text-slate-400 flex items-center justify-between">
-              <span>Prototype Risk Score</span>
-              <span className="text-rose-400 font-bold font-mono">{Math.round(prediction.calibrated_probability_estimate * 100)}/100</span>
+        {/* Core Risk & Confidence Metrics Grid */}
+        <div className="grid grid-cols-3 gap-2">
+          {/* 1. Calibrated Bust Risk */}
+          <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400">P(Bust Risk)</div>
+            <div className="mt-1 flex items-baseline justify-between">
+              <span className="text-rose-400 font-bold font-mono text-base">
+                {Math.round(prediction.calibrated_probability_estimate * 100)}%
+              </span>
+              <span className="text-[9px] text-slate-500 font-mono">
+                {Math.round(prediction.calibrated_probability_estimate * 100)}/100
+              </span>
             </div>
-            <div className="mt-2 w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+            <div className="mt-1.5 w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
               <div 
                 className={`h-full transition-all duration-500 ${
-                  prediction.calibrated_probability_estimate >= 0.75 ? 'bg-red-500' :
-                  prediction.calibrated_probability_estimate >= 0.50 ? 'bg-orange-500' :
-                  prediction.calibrated_probability_estimate >= 0.28 ? 'bg-amber-400' : 'bg-emerald-400'
+                  prediction.calibrated_probability_estimate >= 0.70 ? 'bg-red-500' :
+                  prediction.calibrated_probability_estimate >= 0.45 ? 'bg-orange-500' :
+                  prediction.calibrated_probability_estimate >= 0.25 ? 'bg-amber-400' : 'bg-emerald-400'
                 }`}
-                style={{ width: `${prediction.calibrated_probability_estimate * 100}%` }}
+                style={{ width: `${Math.min(100, Math.max(2, prediction.calibrated_probability_estimate * 100))}%` }}
               />
-            </div>
-            <div className="text-[9px] text-slate-500 mt-1 font-mono">
-              Deterministic Prototype Heuristic
             </div>
           </div>
 
-          <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
-            <div className="text-[10px] uppercase tracking-wider text-slate-400">Prototype Uncertainty Interval</div>
-            <div className="mt-1 text-base font-bold text-amber-300 font-mono">
-              {prediction.prototype_uncertainty_interval ? `${prediction.prototype_uncertainty_interval[0]} – ${prediction.prototype_uncertainty_interval[1]} mm` : `${prediction.expected_error_range[0]} – ${prediction.expected_error_range[1]} mm`}
+          {/* 2. Calibrated Confidence */}
+          <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400">Confidence</div>
+            <div className="mt-1 flex items-baseline justify-between">
+              <span className="text-emerald-400 font-bold font-mono text-base">
+                {prediction.confidence_score_pct !== undefined 
+                  ? `${prediction.confidence_score_pct}%` 
+                  : `${Math.round((1 - prediction.calibrated_probability_estimate) * 100)}%`}
+              </span>
+              <span className="text-[9px] text-slate-500 font-mono">1 - P(Bust)</span>
             </div>
-            <div className="text-[9px] text-slate-500 mt-1 font-mono">
-              Spread-Residual Heuristic Envelope
+            <div className="mt-1.5 w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-emerald-500 transition-all duration-500"
+                style={{ 
+                  width: `${prediction.confidence_score_pct !== undefined 
+                    ? prediction.confidence_score_pct 
+                    : (1 - prediction.calibrated_probability_estimate) * 100}%` 
+                }}
+              />
+            </div>
+          </div>
+
+          {/* 3. Uncertainty Interval */}
+          <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400">Uncertainty</div>
+            <div className="mt-1 text-xs font-bold text-amber-300 font-mono">
+              {prediction.prototype_uncertainty_interval 
+                ? `${prediction.prototype_uncertainty_interval[0]}–${prediction.prototype_uncertainty_interval[1]}` 
+                : `${prediction.expected_error_range[0]}–${prediction.expected_error_range[1]}`}
+              <span className="text-[9px] text-slate-400 font-normal ml-0.5">mm</span>
+            </div>
+            <div className="text-[8px] text-slate-500 mt-1 font-mono truncate">
+              Spread-Residual
             </div>
           </div>
         </div>
@@ -165,15 +199,63 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
           </p>
         </div>
 
-        {/* WHY DISTRUST THIS FORECAST? Panel (Highlight Feature) */}
+        {/* EXPLAINABLE AI: TreeSHAP Feature Attributions */}
+        {prediction.shap_attributions && prediction.shap_attributions.length > 0 && (
+          <div className="p-3.5 rounded-lg bg-sky-950/20 border border-sky-500/30">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-sky-500/20">
+              <div className="flex items-center space-x-2 text-sky-400">
+                <Layers className="w-4 h-4" />
+                <h3 className="font-bold text-xs uppercase tracking-wider">Explainable AI (TreeSHAP Attributions)</h3>
+              </div>
+              <span className="text-[9px] text-sky-300/80 font-mono">
+                Model Drivers
+              </span>
+            </div>
+            <div className="space-y-1.5">
+              {prediction.shap_attributions.slice(0, 5).map((attr, idx) => {
+                const isRiskIncrease = attr.attribution_value > 0;
+                return (
+                  <div key={idx} className="p-1.5 rounded bg-slate-900/80 border border-slate-800 text-[11px]">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-slate-200 text-[10px]">{attr.display_name}</span>
+                      <span className={`font-mono font-bold text-[10px] ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
+                        {isRiskIncrease ? `+${attr.attribution_value.toFixed(3)}` : attr.attribution_value.toFixed(3)}
+                      </span>
+                    </div>
+                    <div className="mt-1 flex items-center space-x-2">
+                      <div className="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden flex">
+                        {isRiskIncrease ? (
+                          <div 
+                            className="bg-rose-500 h-full rounded-full"
+                            style={{ width: `${Math.min(100, Math.max(5, attr.abs_magnitude * 35))}%` }}
+                          />
+                        ) : (
+                          <div 
+                            className="bg-emerald-500 h-full rounded-full"
+                            style={{ width: `${Math.min(100, Math.max(5, attr.abs_magnitude * 35))}%` }}
+                          />
+                        )}
+                      </div>
+                      <span className="text-[8px] font-mono text-slate-500">
+                        {attr.direction === 'INCREASES_BUST_RISK' ? 'Increases Risk' : 'Reduces Risk'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* WHY DISTRUST THIS FORECAST? Physical Drivers */}
         <div className="p-3.5 rounded-lg bg-red-950/20 border border-red-500/30">
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-red-500/20">
             <div className="flex items-center space-x-2 text-red-400">
               <AlertOctagon className="w-4 h-4" />
-              <h3 className="font-bold text-xs uppercase tracking-wider">Why Distrust This Forecast?</h3>
+              <h3 className="font-bold text-xs uppercase tracking-wider">Physical Meteorological Drivers</h3>
             </div>
             <span className="text-[10px] text-red-400/80 font-mono">
-              {prediction.why_distrust_drivers.length} Drivers Identified
+              {prediction.why_distrust_drivers.length} Drivers
             </span>
           </div>
 
@@ -201,24 +283,48 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
           </div>
         </div>
 
-        {/* Historical Atmospheric Analogues */}
+        {/* Historical Atmospheric Analogues & Error Behavior */}
         <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
             <div className="flex items-center space-x-1.5 text-sky-400">
               <TrendingUp className="w-4 h-4" />
-              <h4 className="font-bold text-xs uppercase tracking-wider">Historical Precedent Analogue Search</h4>
+              <h4 className="font-bold text-xs uppercase tracking-wider">Historical Precedent & Error Behavior</h4>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono">Top 3 Matches</span>
+            <span className="text-[10px] text-slate-400 font-mono">KNN Feature Space</span>
           </div>
+
+          {/* Analogue Error Statistics Summary Banner */}
+          {prediction.analogue_error_summary && (
+            <div className="mb-2 p-2 rounded bg-slate-950/80 border border-slate-800 text-[10px]">
+              <div className="flex items-center justify-between font-mono text-slate-300 mb-1">
+                <span>Cluster Bust Rate: <strong className="text-rose-400">{Math.round(prediction.analogue_error_summary.historical_bust_rate * 100)}%</strong></span>
+                <span>Mean Error: <strong className="text-amber-300">{prediction.analogue_error_summary.mean_observed_error_mm} mm</strong></span>
+                <span>Bias: <strong className="text-sky-300">{prediction.analogue_error_summary.dominant_bias_direction}</strong></span>
+              </div>
+              <p className="text-slate-400 italic text-[10px] leading-tight">
+                {prediction.analogue_error_summary.summary_text}
+              </p>
+            </div>
+          )}
 
           <div className="space-y-2">
             {prediction.historical_analogues.map((analogue, idx) => (
               <div key={idx} className="p-2 rounded bg-slate-950/60 border border-slate-800 text-[11px]">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-200">{analogue.event_name}</span>
-                  <span className="text-sky-400 font-mono font-bold text-[10px]">
-                    {Math.round(analogue.similarity_score * 100)}% Match
-                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    {analogue.bias_direction && (
+                      <span className={`text-[8px] font-mono px-1 rounded uppercase ${
+                        analogue.bias_direction === 'UNDERFORECAST' ? 'bg-purple-900/50 text-purple-300' :
+                        analogue.bias_direction === 'OVERFORECAST' ? 'bg-blue-900/50 text-blue-300' : 'bg-slate-800 text-slate-400'
+                      }`}>
+                        {analogue.bias_direction}
+                      </span>
+                    )}
+                    <span className="text-sky-400 font-mono font-bold text-[10px]">
+                      {Math.round(analogue.similarity_score * 100)}% Match
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2 text-[10px] text-slate-400 mt-0.5">
                   <span>{analogue.historical_date}</span>
@@ -226,7 +332,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
                   <span>{analogue.region_name} (D+{analogue.lead_time_days})</span>
                   <span>•</span>
                   <span className={analogue.was_bust ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}>
-                    {analogue.was_bust ? 'BUST VERIFIED' : 'STABLE'}
+                    {analogue.was_bust ? `BUST (${analogue.observed_error_mm}mm error)` : 'STABLE'}
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1 italic">

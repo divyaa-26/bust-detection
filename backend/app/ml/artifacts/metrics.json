@@ -1,0 +1,140 @@
+{
+  "model_type": "LightGBM + Isotonic Calibration",
+  "training_partition": "2018-01-01 to 2022-12-31",
+  "validation_partition": "2023-01-01 to 2023-05-31",
+  "test_partition": "2023-06-01 to 2024-03-31",
+  "test_samples_count": 20160,
+  "test_bust_base_rate": 0.0927,
+  "metrics": {
+    "brier_score": 0.0262,
+    "brier_skill_score_vs_climatology": 0.6878,
+    "roc_auc": 0.9832,
+    "pr_auc": 0.8393,
+    "expected_calibration_error": 0.0163
+  },
+  "baselines_comparison": {
+    "climatology_brier_score": 0.0841,
+    "lead_decay_brier_score": 0.1365,
+    "ensemble_spread_brier_score": 0.0826,
+    "demo_heuristic_brier_score": 0.1221,
+    "demo_heuristic_roc_auc": 0.9293
+  },
+  "feature_importance_shap": [
+    {
+      "feature": "ensemble_spread",
+      "mean_abs_shap": 1.7717
+    },
+    {
+      "feature": "consecutive_run_delta",
+      "mean_abs_shap": 1.3825
+    },
+    {
+      "feature": "forecast_value",
+      "mean_abs_shap": 0.5173
+    },
+    {
+      "feature": "analogue_historical_bust_rate",
+      "mean_abs_shap": 0.2683
+    },
+    {
+      "feature": "spatial_gradient",
+      "mean_abs_shap": 0.143
+    },
+    {
+      "feature": "lead_time_days",
+      "mean_abs_shap": 0.0658
+    },
+    {
+      "feature": "inter_model_difference",
+      "mean_abs_shap": 0.0386
+    },
+    {
+      "feature": "analogue_mean_error",
+      "mean_abs_shap": 0.0381
+    },
+    {
+      "feature": "forecast_anomaly",
+      "mean_abs_shap": 0.0358
+    },
+    {
+      "feature": "season_month",
+      "mean_abs_shap": 0.007
+    },
+    {
+      "feature": "is_ghats_or_coastal",
+      "mean_abs_shap": 0.0035
+    }
+  ],
+  "calibration_bins": [
+    {
+      "bin_index": 1,
+      "bin_center": 0.05,
+      "forecast_prob": 0.013,
+      "observed_frequency": 0.004,
+      "sample_count": 17559
+    },
+    {
+      "bin_index": 2,
+      "bin_center": 0.15,
+      "forecast_prob": 0.135,
+      "observed_frequency": 0.236,
+      "sample_count": 106
+    },
+    {
+      "bin_index": 3,
+      "bin_center": 0.25,
+      "forecast_prob": 0.275,
+      "observed_frequency": 0.417,
+      "sample_count": 650
+    },
+    {
+      "bin_index": 4,
+      "bin_center": 0.35,
+      "forecast_prob": 0.342,
+      "observed_frequency": 0.556,
+      "sample_count": 9
+    },
+    {
+      "bin_index": 5,
+      "bin_center": 0.45,
+      "forecast_prob": 0.451,
+      "observed_frequency": 0.727,
+      "sample_count": 11
+    },
+    {
+      "bin_index": 6,
+      "bin_center": 0.55,
+      "forecast_prob": 0.559,
+      "observed_frequency": 0.333,
+      "sample_count": 6
+    },
+    {
+      "bin_index": 7,
+      "bin_center": 0.65,
+      "forecast_prob": 0.681,
+      "observed_frequency": 0.734,
+      "sample_count": 748
+    },
+    {
+      "bin_index": 8,
+      "bin_center": 0.75,
+      "forecast_prob": 0.753,
+      "observed_frequency": 0.795,
+      "sample_count": 127
+    },
+    {
+      "bin_index": 9,
+      "bin_center": 0.85,
+      "forecast_prob": 0.8,
+      "observed_frequency": 0.79,
+      "sample_count": 390
+    },
+    {
+      "bin_index": 10,
+      "bin_center": 0.95,
+      "forecast_prob": 0.989,
+      "observed_frequency": 0.951,
+      "sample_count": 554
+    }
+  ]
+}

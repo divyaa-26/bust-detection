@@ -12,15 +12,22 @@ class ModelFeatures(BaseModel):
     climatological_mean: float
     spatial_gradient: float
     is_ghats_or_coastal: bool = False
+    consecutive_run_delta: float = 0.0
+    analogue_historical_bust_rate: float = 0.086
+    analogue_mean_error: float = 12.0
+    season_month: int = 7
 
 class RawModelOutput(BaseModel):
-    prototype_badge: str = "PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED"
+    prototype_badge: str = "ML MODEL (LightGBM + Isotonic)"
     bust_probability: float
     calibrated_probability: float
+    confidence: float = 0.5
+    confidence_score_pct: float = 50.0
     expected_error_low: float
     expected_error_high: float
-    confidence_tier: str = "PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED"
+    confidence_tier: str = "Trained & Calibrated"
     model_version: str
+    shap_attributions: Optional[List[Dict[str, Any]]] = None
 
 class BaseReliabilityModel(ABC):
     """

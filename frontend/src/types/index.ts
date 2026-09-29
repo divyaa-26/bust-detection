@@ -28,6 +28,24 @@ export interface HistoricalAnalogue {
   actual_outcome: string;
   was_bust: boolean;
   observed_error_mm: number;
+  bias_direction?: 'UNDERFORECAST' | 'OVERFORECAST' | 'NEUTRAL';
+}
+
+export interface AnalogueErrorSummary {
+  analogue_count: number;
+  historical_bust_rate: number;
+  mean_observed_error_mm: number;
+  dominant_bias_direction: string;
+  summary_text: string;
+}
+
+export interface ShapAttribution {
+  feature_name: string;
+  display_name: string;
+  attribution_value: number;
+  abs_magnitude: number;
+  direction: 'INCREASES_BUST_RISK' | 'REDUCES_BUST_RISK';
+  feature_input_value: number;
 }
 
 export interface PredictionDetail {
@@ -45,6 +63,8 @@ export interface PredictionDetail {
   prototype_badge: string;
   demo_bust_probability: number;
   calibrated_probability_estimate: number;
+  confidence?: number;
+  confidence_score_pct?: number;
   risk_level: RiskLevel;
   expected_error_range: [number, number];
   prototype_uncertainty_interval: [number, number];
@@ -55,12 +75,40 @@ export interface PredictionDetail {
   historical_skill_at_lead: number;
   spatial_gradient_instability: number;
   why_distrust_drivers: DriverDetail[];
+  shap_attributions?: ShapAttribution[];
   historical_analogues: HistoricalAnalogue[];
+  analogue_error_summary?: AnalogueErrorSummary;
   operational_priority: OperationalPriority;
   recommended_action: string;
   model_name: string;
   data_mode: DataMode;
   provenance_hash: string;
+}
+
+export interface RegionLeadCell {
+  region_id: string;
+  region_name: string;
+  lead_time_days: number;
+  bust_probability: number;
+  confidence: number;
+  confidence_score_pct: number;
+  risk_level: string;
+  forecast_value: number;
+  ensemble_spread: number;
+  inter_model_difference: number;
+}
+
+export interface RegionLeadMatrixResponse {
+  initialization_time: string;
+  variable: string;
+  lead_days: number[];
+  regions_count: number;
+  lead_summary: {
+    lead_time_days: number;
+    mean_bust_probability: number;
+    mean_confidence: number;
+  }[];
+  matrix: RegionLeadCell[];
 }
 
 export interface PriorityQueueItem {

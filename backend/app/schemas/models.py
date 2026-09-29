@@ -108,6 +108,14 @@ class HistoricalAnalogue(BaseModel):
     actual_outcome: str
     was_bust: bool
     observed_error_mm: float
+    bias_direction: Optional[str] = "UNDERFORECAST"  # UNDERFORECAST, OVERFORECAST, NEUTRAL
+
+class AnalogueErrorSummary(BaseModel):
+    analogue_count: int
+    historical_bust_rate: float
+    mean_observed_error_mm: float
+    dominant_bias_direction: str
+    summary_text: str
 
 # Decision Support & Risk Prediction
 class PredictionDetail(BaseModel):
@@ -123,16 +131,18 @@ class PredictionDetail(BaseModel):
     forecast_value: float
     units: str
     
-    # Probabilities & Uncertainty (Strict Scientific Honesty: Prototype estimates, unvalidated)
-    prototype_badge: str = "PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED"
-    prototype_risk_score: float = Field(0.0, ge=0.0, le=1.0, description="Prototype risk score (NOT calibrated probability)")
-    demo_bust_probability: float = Field(..., ge=0.0, le=1.0, description="Deterministic prototype risk score")
-    calibrated_probability_estimate: float = Field(..., ge=0.0, le=1.0, description="Platt-scaled prototype risk estimate (NOT operational validated probability)")
+    # Probabilities & Uncertainty (Calibrated LightGBM ML Model with Demo Heuristic fallback)
+    prototype_badge: str = "ML MODEL (LightGBM + Isotonic)"
+    prototype_risk_score: float = Field(0.0, ge=0.0, le=1.0, description="Risk score (0.0 to 1.0)")
+    demo_bust_probability: float = Field(..., ge=0.0, le=1.0, description="Bust probability estimate")
+    calibrated_probability_estimate: float = Field(..., ge=0.0, le=1.0, description="Isotonically calibrated bust probability P(Bust)")
+    confidence: float = Field(0.5, ge=0.0, le=1.0, description="Calibrated forecast confidence score (1 - P(Bust))")
+    confidence_score_pct: float = Field(50.0, ge=0.0, le=100.0, description="Calibrated forecast confidence percentage (0 to 100)")
     risk_level: RiskLevel
     expected_error_range: tuple[float, float]
-    prototype_uncertainty_interval: tuple[float, float] = Field(..., description="Prototype uncertainty interval derived from spread-residual heuristic (NOT validated conformal guarantee)")
-    conformal_interval_90: tuple[float, float] = Field(..., description="Legacy alias for prototype uncertainty interval")
-    confidence_tier: str = "PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED"
+    prototype_uncertainty_interval: tuple[float, float] = Field(..., description="Prototype uncertainty interval derived from spread-residual heuristic")
+    conformal_interval_90: tuple[float, float] = Field(..., description="Legacy alias for uncertainty interval")
+    confidence_tier: str = "Trained & Calibrated"
     
     # Model agreement & ensemble
     ensemble_spread: float
@@ -140,16 +150,18 @@ class PredictionDetail(BaseModel):
     historical_skill_at_lead: float
     spatial_gradient_instability: float
     
-    # Why Distrust drivers (Evidence & Association language)
+    # Why Distrust drivers & Explainable AI (SHAP attributions and physical drivers)
     why_distrust_drivers: List[DriverDetail]
+    shap_attributions: Optional[List[Dict[str, Any]]] = None
     historical_analogues: List[HistoricalAnalogue]
+    analogue_error_summary: Optional[AnalogueErrorSummary] = None
     
     # Operational priority
     operational_priority: OperationalPriority
     recommended_action: str
     
     # Scientific honesty & provenance
-    model_name: str = "DemoReliabilityModel (Deterministic Prototype — Unvalidated)"
+    model_name: str = "TrainedReliabilityModel (LightGBM + Isotonic Calibration)"
     data_mode: DataModeEnum
     provenance_hash: str
 

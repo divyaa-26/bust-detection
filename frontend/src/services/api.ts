@@ -99,5 +99,11 @@ export const api = {
     const res = await fetch(`${BASE_URL}/feedback`);
     if (!res.ok) throw new Error('Failed to fetch feedback');
     return res.json();
+  },
+
+  async getRegionLeadMatrix(variable: string = 'precipitation_mm_day', forecastRun: string = '2024-07-15T00:00:00Z') {
+    const res = await fetch(`${BASE_URL}/matrix/region-lead?variable=${variable}&forecast_run=${forecastRun}`);
+    if (!res.ok) throw new Error('Failed to fetch region lead matrix');
+    return res.json();
   }
 };
