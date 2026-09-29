@@ -208,10 +208,10 @@ export const HistoricalReplayView: React.FC<HistoricalReplayViewProps> = ({
             {/* Current Step State Display */}
             {currentStep && (
               <div className="p-6 rounded-xl bg-[#111827] border border-slate-800 shadow-xl space-y-5">
-                {/* Persistent Visible Prototype Badge */}
+                {/* Persistent Visible Replay Mode Badge */}
                 <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/40 text-amber-300 text-center font-mono text-[10px] font-bold tracking-wider uppercase flex items-center justify-center space-x-1.5">
                   <AlertOctagon className="w-3.5 h-3.5 text-amber-400" />
-                  <span>PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED</span>
+                  <span>PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED (HISTORICAL REPLAY ARCHIVE)</span>
                 </div>
 
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">

@@ -55,10 +55,17 @@ export const Layout: React.FC<LayoutProps> = ({
   return (
     <div className="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col">
       {/* Top Persistent Model Status Banner */}
-      <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1 text-center font-mono text-[10px] text-emerald-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
-        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-        <span>REAL GFS + IMD TRAINED MODEL (NOAA GFS 0.25° + IMD DAILY GRIDDED VERIFICATION)</span>
-      </div>
+      {currentTab === 'replay' ? (
+        <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-1 text-center font-mono text-[10px] text-amber-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
+          <History className="w-3.5 h-3.5 text-amber-400" />
+          <span>HISTORICAL COUNTERFACTUAL REPLAY MODE (CURATED SYNOPTIC ARCHIVE — CYCLONE BIPARJOY 2023)</span>
+        </div>
+      ) : (
+        <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1 text-center font-mono text-[10px] text-emerald-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <span>REAL GFS + IMD TRAINED MODEL (NOAA GFS 0.25° + IMD DAILY GRIDDED VERIFICATION)</span>
+        </div>
+      )}
 
       {/* Top Header - AETHER-DISPUTE Workstation Banner */}
       <header className="sticky top-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md border-b border-outline-variant shadow-lg">
