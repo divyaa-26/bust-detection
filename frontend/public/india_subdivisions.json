@@ -1,0 +1,1416 @@
+{
+  "type": "FeatureCollection",
+  "name": "IMD_36_Meteorological_Subdivisions",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "SUB_01",
+      "properties": {
+        "subdivision_id": "SUB_01",
+        "name": "Andaman & Nicobar Islands",
+        "macro_region": "South Peninsula",
+        "center_lat": 11.74,
+        "center_lon": 92.65,
+        "terrain_type": "island"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              92.0,
+              9.0
+            ],
+            [
+              93.5,
+              9.0
+            ],
+            [
+              93.5,
+              13.5
+            ],
+            [
+              92.0,
+              13.5
+            ],
+            [
+              92.0,
+              9.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_02",
+      "properties": {
+        "subdivision_id": "SUB_02",
+        "name": "Arunachal Pradesh",
+        "macro_region": "East & Northeast",
+        "center_lat": 28.21,
+        "center_lon": 94.72,
+        "terrain_type": "himalayan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              91.5,
+              26.6
+            ],
+            [
+              97.4,
+              26.6
+            ],
+            [
+              97.4,
+              29.5
+            ],
+            [
+              91.5,
+              29.5
+            ],
+            [
+              91.5,
+              26.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_03",
+      "properties": {
+        "subdivision_id": "SUB_03",
+        "name": "Assam & Meghalaya",
+        "macro_region": "East & Northeast",
+        "center_lat": 26.2,
+        "center_lon": 92.93,
+        "terrain_type": "hills_valleys"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              89.7,
+              25.0
+            ],
+            [
+              95.8,
+              25.0
+            ],
+            [
+              95.8,
+              27.9
+            ],
+            [
+              89.7,
+              27.9
+            ],
+            [
+              89.7,
+              25.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_04",
+      "properties": {
+        "subdivision_id": "SUB_04",
+        "name": "Nagaland, Manipur, Mizoram & Tripura",
+        "macro_region": "East & Northeast",
+        "center_lat": 24.81,
+        "center_lon": 93.93,
+        "terrain_type": "hills"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              91.1,
+              21.9
+            ],
+            [
+              95.2,
+              21.9
+            ],
+            [
+              95.2,
+              27.0
+            ],
+            [
+              91.1,
+              27.0
+            ],
+            [
+              91.1,
+              21.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_05",
+      "properties": {
+        "subdivision_id": "SUB_05",
+        "name": "Sub-Himalayan West Bengal & Sikkim",
+        "macro_region": "East & Northeast",
+        "center_lat": 27.03,
+        "center_lon": 88.5,
+        "terrain_type": "himalayan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              87.9,
+              26.0
+            ],
+            [
+              89.9,
+              26.0
+            ],
+            [
+              89.9,
+              27.9
+            ],
+            [
+              87.9,
+              27.9
+            ],
+            [
+              87.9,
+              26.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_06",
+      "properties": {
+        "subdivision_id": "SUB_06",
+        "name": "Gangetic West Bengal",
+        "macro_region": "East & Northeast",
+        "center_lat": 22.98,
+        "center_lon": 87.85,
+        "terrain_type": "plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              86.5,
+              21.5
+            ],
+            [
+              89.1,
+              21.5
+            ],
+            [
+              89.1,
+              24.5
+            ],
+            [
+              86.5,
+              24.5
+            ],
+            [
+              86.5,
+              21.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_07",
+      "properties": {
+        "subdivision_id": "SUB_07",
+        "name": "Odisha",
+        "macro_region": "East & Northeast",
+        "center_lat": 20.95,
+        "center_lon": 85.09,
+        "terrain_type": "coastal_plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              81.3,
+              17.8
+            ],
+            [
+              87.5,
+              17.8
+            ],
+            [
+              87.5,
+              22.6
+            ],
+            [
+              81.3,
+              22.6
+            ],
+            [
+              81.3,
+              17.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_08",
+      "properties": {
+        "subdivision_id": "SUB_08",
+        "name": "Jharkhand",
+        "macro_region": "East & Northeast",
+        "center_lat": 23.61,
+        "center_lon": 85.27,
+        "terrain_type": "plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              83.3,
+              21.9
+            ],
+            [
+              87.9,
+              21.9
+            ],
+            [
+              87.9,
+              25.3
+            ],
+            [
+              83.3,
+              25.3
+            ],
+            [
+              83.3,
+              21.9
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_09",
+      "properties": {
+        "subdivision_id": "SUB_09",
+        "name": "Bihar",
+        "macro_region": "East & Northeast",
+        "center_lat": 25.09,
+        "center_lon": 85.31,
+        "terrain_type": "plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              83.3,
+              24.3
+            ],
+            [
+              88.3,
+              24.3
+            ],
+            [
+              88.3,
+              27.5
+            ],
+            [
+              83.3,
+              27.5
+            ],
+            [
+              83.3,
+              24.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_10",
+      "properties": {
+        "subdivision_id": "SUB_10",
+        "name": "East Uttar Pradesh",
+        "macro_region": "Northwest",
+        "center_lat": 26.5,
+        "center_lon": 82.5,
+        "terrain_type": "plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.5,
+              24.0
+            ],
+            [
+              84.6,
+              24.0
+            ],
+            [
+              84.6,
+              28.5
+            ],
+            [
+              80.5,
+              28.5
+            ],
+            [
+              80.5,
+              24.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_11",
+      "properties": {
+        "subdivision_id": "SUB_11",
+        "name": "West Uttar Pradesh",
+        "macro_region": "Northwest",
+        "center_lat": 27.8,
+        "center_lon": 78.5,
+        "terrain_type": "plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.0,
+              25.5
+            ],
+            [
+              80.5,
+              25.5
+            ],
+            [
+              80.5,
+              30.5
+            ],
+            [
+              77.0,
+              30.5
+            ],
+            [
+              77.0,
+              25.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_12",
+      "properties": {
+        "subdivision_id": "SUB_12",
+        "name": "Uttarakhand",
+        "macro_region": "Northwest",
+        "center_lat": 30.06,
+        "center_lon": 79.01,
+        "terrain_type": "himalayan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.6,
+              28.7
+            ],
+            [
+              81.1,
+              28.7
+            ],
+            [
+              81.1,
+              31.4
+            ],
+            [
+              77.6,
+              31.4
+            ],
+            [
+              77.6,
+              28.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_13",
+      "properties": {
+        "subdivision_id": "SUB_13",
+        "name": "Haryana, Chandigarh & Delhi",
+        "macro_region": "Northwest",
+        "center_lat": 29.05,
+        "center_lon": 76.08,
+        "terrain_type": "plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.5,
+              27.6
+            ],
+            [
+              77.6,
+              27.6
+            ],
+            [
+              77.6,
+              30.9
+            ],
+            [
+              74.5,
+              30.9
+            ],
+            [
+              74.5,
+              27.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_14",
+      "properties": {
+        "subdivision_id": "SUB_14",
+        "name": "Punjab",
+        "macro_region": "Northwest",
+        "center_lat": 31.14,
+        "center_lon": 75.34,
+        "terrain_type": "plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.8,
+              29.5
+            ],
+            [
+              76.9,
+              29.5
+            ],
+            [
+              76.9,
+              32.5
+            ],
+            [
+              73.8,
+              32.5
+            ],
+            [
+              73.8,
+              29.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_15",
+      "properties": {
+        "subdivision_id": "SUB_15",
+        "name": "Himachal Pradesh",
+        "macro_region": "Northwest",
+        "center_lat": 31.9,
+        "center_lon": 77.2,
+        "terrain_type": "himalayan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.6,
+              30.4
+            ],
+            [
+              79.0,
+              30.4
+            ],
+            [
+              79.0,
+              33.2
+            ],
+            [
+              75.6,
+              33.2
+            ],
+            [
+              75.6,
+              30.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_16",
+      "properties": {
+        "subdivision_id": "SUB_16",
+        "name": "Jammu & Kashmir and Ladakh",
+        "macro_region": "Northwest",
+        "center_lat": 34.08,
+        "center_lon": 76.5,
+        "terrain_type": "himalayan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.5,
+              32.2
+            ],
+            [
+              80.5,
+              32.2
+            ],
+            [
+              80.5,
+              36.5
+            ],
+            [
+              73.5,
+              36.5
+            ],
+            [
+              73.5,
+              32.2
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_17",
+      "properties": {
+        "subdivision_id": "SUB_17",
+        "name": "West Rajasthan",
+        "macro_region": "Northwest",
+        "center_lat": 26.8,
+        "center_lon": 72.0,
+        "terrain_type": "arid_desert"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              69.5,
+              24.5
+            ],
+            [
+              74.0,
+              24.5
+            ],
+            [
+              74.0,
+              30.0
+            ],
+            [
+              69.5,
+              30.0
+            ],
+            [
+              69.5,
+              24.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_18",
+      "properties": {
+        "subdivision_id": "SUB_18",
+        "name": "East Rajasthan",
+        "macro_region": "Northwest",
+        "center_lat": 26.2,
+        "center_lon": 75.8,
+        "terrain_type": "semi_arid"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.0,
+              23.5
+            ],
+            [
+              78.2,
+              23.5
+            ],
+            [
+              78.2,
+              28.5
+            ],
+            [
+              74.0,
+              28.5
+            ],
+            [
+              74.0,
+              23.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_19",
+      "properties": {
+        "subdivision_id": "SUB_19",
+        "name": "West Madhya Pradesh",
+        "macro_region": "Central",
+        "center_lat": 23.3,
+        "center_lon": 76.8,
+        "terrain_type": "plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.0,
+              21.0
+            ],
+            [
+              78.5,
+              21.0
+            ],
+            [
+              78.5,
+              26.8
+            ],
+            [
+              74.0,
+              26.8
+            ],
+            [
+              74.0,
+              21.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_20",
+      "properties": {
+        "subdivision_id": "SUB_20",
+        "name": "East Madhya Pradesh",
+        "macro_region": "Central",
+        "center_lat": 23.5,
+        "center_lon": 80.5,
+        "terrain_type": "plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.5,
+              21.5
+            ],
+            [
+              82.8,
+              21.5
+            ],
+            [
+              82.8,
+              25.2
+            ],
+            [
+              78.5,
+              25.2
+            ],
+            [
+              78.5,
+              21.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_21",
+      "properties": {
+        "subdivision_id": "SUB_21",
+        "name": "Gujarat Region",
+        "macro_region": "Northwest",
+        "center_lat": 22.8,
+        "center_lon": 73.0,
+        "terrain_type": "plains_hills"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.8,
+              20.0
+            ],
+            [
+              74.5,
+              20.0
+            ],
+            [
+              74.5,
+              24.5
+            ],
+            [
+              71.8,
+              24.5
+            ],
+            [
+              71.8,
+              20.0
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_22",
+      "properties": {
+        "subdivision_id": "SUB_22",
+        "name": "Saurashtra & Kutch",
+        "macro_region": "Northwest",
+        "center_lat": 22.3,
+        "center_lon": 70.3,
+        "terrain_type": "coastal_arid"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              68.1,
+              20.5
+            ],
+            [
+              72.2,
+              20.5
+            ],
+            [
+              72.2,
+              24.8
+            ],
+            [
+              68.1,
+              24.8
+            ],
+            [
+              68.1,
+              20.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_23",
+      "properties": {
+        "subdivision_id": "SUB_23",
+        "name": "Konkan & Goa",
+        "macro_region": "South Peninsula",
+        "center_lat": 16.5,
+        "center_lon": 73.5,
+        "terrain_type": "coastal_ghats"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              72.5,
+              14.8
+            ],
+            [
+              74.2,
+              14.8
+            ],
+            [
+              74.2,
+              20.2
+            ],
+            [
+              72.5,
+              20.2
+            ],
+            [
+              72.5,
+              14.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_24",
+      "properties": {
+        "subdivision_id": "SUB_24",
+        "name": "Madhya Maharashtra",
+        "macro_region": "Central",
+        "center_lat": 18.5,
+        "center_lon": 74.8,
+        "terrain_type": "ghats_plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              73.5,
+              15.6
+            ],
+            [
+              76.5,
+              15.6
+            ],
+            [
+              76.5,
+              21.5
+            ],
+            [
+              73.5,
+              21.5
+            ],
+            [
+              73.5,
+              15.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_25",
+      "properties": {
+        "subdivision_id": "SUB_25",
+        "name": "Marathwada",
+        "macro_region": "Central",
+        "center_lat": 19.1,
+        "center_lon": 76.5,
+        "terrain_type": "semi_arid_plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.8,
+              17.5
+            ],
+            [
+              77.9,
+              17.5
+            ],
+            [
+              77.9,
+              20.8
+            ],
+            [
+              74.8,
+              20.8
+            ],
+            [
+              74.8,
+              17.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_26",
+      "properties": {
+        "subdivision_id": "SUB_26",
+        "name": "Vidarbha",
+        "macro_region": "Central",
+        "center_lat": 20.9,
+        "center_lon": 79.2,
+        "terrain_type": "plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.5,
+              19.5
+            ],
+            [
+              80.9,
+              19.5
+            ],
+            [
+              80.9,
+              22.0
+            ],
+            [
+              76.5,
+              22.0
+            ],
+            [
+              76.5,
+              19.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_27",
+      "properties": {
+        "subdivision_id": "SUB_27",
+        "name": "Chhattisgarh",
+        "macro_region": "Central",
+        "center_lat": 21.27,
+        "center_lon": 81.86,
+        "terrain_type": "plateau_forests"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.2,
+              17.8
+            ],
+            [
+              84.4,
+              17.8
+            ],
+            [
+              84.4,
+              24.1
+            ],
+            [
+              80.2,
+              24.1
+            ],
+            [
+              80.2,
+              17.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_28",
+      "properties": {
+        "subdivision_id": "SUB_28",
+        "name": "Coastal Andhra Pradesh & Yanam",
+        "macro_region": "South Peninsula",
+        "center_lat": 16.2,
+        "center_lon": 81.5,
+        "terrain_type": "coastal"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              80.0,
+              13.5
+            ],
+            [
+              84.5,
+              13.5
+            ],
+            [
+              84.5,
+              19.2
+            ],
+            [
+              80.0,
+              19.2
+            ],
+            [
+              80.0,
+              13.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_29",
+      "properties": {
+        "subdivision_id": "SUB_29",
+        "name": "Telangana",
+        "macro_region": "South Peninsula",
+        "center_lat": 17.8,
+        "center_lon": 79.1,
+        "terrain_type": "plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.2,
+              15.8
+            ],
+            [
+              81.3,
+              15.8
+            ],
+            [
+              81.3,
+              19.9
+            ],
+            [
+              77.2,
+              19.9
+            ],
+            [
+              77.2,
+              15.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_30",
+      "properties": {
+        "subdivision_id": "SUB_30",
+        "name": "Rayalaseema",
+        "macro_region": "South Peninsula",
+        "center_lat": 14.7,
+        "center_lon": 78.5,
+        "terrain_type": "semi_arid_plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.8,
+              12.6
+            ],
+            [
+              80.2,
+              12.6
+            ],
+            [
+              80.2,
+              16.2
+            ],
+            [
+              76.8,
+              16.2
+            ],
+            [
+              76.8,
+              12.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_31",
+      "properties": {
+        "subdivision_id": "SUB_31",
+        "name": "Tamil Nadu, Puducherry & Karaikal",
+        "macro_region": "South Peninsula",
+        "center_lat": 11.12,
+        "center_lon": 78.65,
+        "terrain_type": "coastal_plains"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              76.2,
+              8.1
+            ],
+            [
+              80.3,
+              8.1
+            ],
+            [
+              80.3,
+              13.5
+            ],
+            [
+              76.2,
+              13.5
+            ],
+            [
+              76.2,
+              8.1
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_32",
+      "properties": {
+        "subdivision_id": "SUB_32",
+        "name": "Coastal Karnataka",
+        "macro_region": "South Peninsula",
+        "center_lat": 13.8,
+        "center_lon": 74.8,
+        "terrain_type": "coastal_ghats"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.0,
+              12.7
+            ],
+            [
+              75.4,
+              12.7
+            ],
+            [
+              75.4,
+              15.1
+            ],
+            [
+              74.0,
+              15.1
+            ],
+            [
+              74.0,
+              12.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_33",
+      "properties": {
+        "subdivision_id": "SUB_33",
+        "name": "North Interior Karnataka",
+        "macro_region": "South Peninsula",
+        "center_lat": 15.8,
+        "center_lon": 76.0,
+        "terrain_type": "plateau"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.3,
+              14.4
+            ],
+            [
+              77.6,
+              14.4
+            ],
+            [
+              77.6,
+              18.5
+            ],
+            [
+              74.3,
+              18.5
+            ],
+            [
+              74.3,
+              14.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_34",
+      "properties": {
+        "subdivision_id": "SUB_34",
+        "name": "South Interior Karnataka",
+        "macro_region": "South Peninsula",
+        "center_lat": 13.0,
+        "center_lon": 76.5,
+        "terrain_type": "plateau_ghats"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.0,
+              11.6
+            ],
+            [
+              78.3,
+              11.6
+            ],
+            [
+              78.3,
+              14.5
+            ],
+            [
+              75.0,
+              14.5
+            ],
+            [
+              75.0,
+              11.6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_35",
+      "properties": {
+        "subdivision_id": "SUB_35",
+        "name": "Kerala & Mahe",
+        "macro_region": "South Peninsula",
+        "center_lat": 10.85,
+        "center_lon": 76.27,
+        "terrain_type": "coastal_ghats"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.8,
+              8.3
+            ],
+            [
+              77.4,
+              8.3
+            ],
+            [
+              77.4,
+              12.8
+            ],
+            [
+              74.8,
+              12.8
+            ],
+            [
+              74.8,
+              8.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SUB_36",
+      "properties": {
+        "subdivision_id": "SUB_36",
+        "name": "Lakshadweep",
+        "macro_region": "South Peninsula",
+        "center_lat": 10.56,
+        "center_lon": 72.64,
+        "terrain_type": "island"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              71.5,
+              8.2
+            ],
+            [
+              73.8,
+              8.2
+            ],
+            [
+              73.8,
+              12.3
+            ],
+            [
+              71.5,
+              12.3
+            ],
+            [
+              71.5,
+              8.2
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
