@@ -9,35 +9,24 @@ import {
   BookOpen, 
   Send, 
   Database, 
-  FileCheck2,
-  ChevronRight,
-  Sliders
+  FileCheck2
 } from 'lucide-react';
 import { DataMode } from '../types';
 
 interface LayoutProps {
   currentTab: string;
   setCurrentTab: (tab: string) => void;
-  leadTimeDays: number;
-  setLeadTimeDays: (days: number) => void;
   dataMode: DataMode;
-  setDataMode: (mode: DataMode) => void;
+  setDataMode?: (mode: DataMode) => void;
   initTime: string;
-  activeDemoStep: number;
-  onExecuteDemoStep: (step: number) => void;
   children: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({
   currentTab,
   setCurrentTab,
-  leadTimeDays,
-  setLeadTimeDays,
   dataMode,
-  setDataMode,
   initTime,
-  activeDemoStep,
-  onExecuteDemoStep,
   children
 }) => {
   const navItems = [
@@ -90,67 +79,11 @@ export const Layout: React.FC<LayoutProps> = ({
             </div>
           </div>
 
-          {/* Quick Evaluation Stepper */}
-          <div className="hidden lg:flex items-center space-x-1 bg-surface-container-low px-2 py-1 rounded border border-outline-variant/60 text-xs">
-            <span className="text-[10px] font-mono uppercase text-primary-fixed mr-1 font-bold">
-              SIH Flow:
-            </span>
-            {[
-              { step: 1, label: '1. D+5' },
-              { step: 2, label: '2. T-5 Biparjoy' },
-              { step: 3, label: '3. Saurashtra' },
-              { step: 4, label: '4. Why Distrust' },
-              { step: 5, label: '5. Jump T-1' },
-              { step: 6, label: '6. +143mm Bust' },
-              { step: 7, label: '7. GFS vs AIFS' }
-            ].map(({ step, label }) => {
-              const isActive = activeDemoStep === step;
-              return (
-                <button
-                  key={step}
-                  onClick={() => onExecuteDemoStep(step)}
-                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition ${
-                    isActive
-                      ? 'bg-sky-500 text-white font-bold shadow-md shadow-sky-500/30'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-            <button
-              onClick={() => onExecuteDemoStep(((activeDemoStep || 0) % 7) + 1)}
-              className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-400"
-              title="Next Step"
-            >
-              <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
-
-          {/* Top Right Controls: Synoptic Time & Lead Selector */}
+          {/* Top Right Controls: Synoptic Time */}
           <div className="flex items-center space-x-3 shrink-0 text-xs font-mono">
-            <div className="hidden sm:flex flex-col text-right">
+            <div className="flex flex-col text-right">
               <span className="text-[9px] uppercase text-outline">SYNOPTIC RUN</span>
               <span className="text-primary-fixed text-[11px] font-bold">{initTime}</span>
-            </div>
-
-            <div className="h-6 w-px bg-outline-variant hidden sm:block" />
-
-            <div className="flex items-center space-x-1.5 bg-surface-container px-2.5 py-1 rounded border border-outline-variant">
-              <Sliders className="w-3.5 h-3.5 text-primary-container" />
-              <span className="text-[10px] uppercase text-outline">LEAD:</span>
-              <select
-                value={leadTimeDays}
-                onChange={(e) => setLeadTimeDays(Number(e.target.value))}
-                className="bg-transparent font-bold text-primary-fixed focus:outline-none cursor-pointer text-xs"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
-                  <option key={d} value={d} className="bg-surface-container-lowest text-on-surface">
-                    D+{d} ({d * 24}h)
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
         </div>

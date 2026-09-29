@@ -39,7 +39,6 @@ export const App: React.FC = () => {
   const [priorityQueue, setPriorityQueue] = useState<PriorityQueueItem[]>([]);
   const [selectedRegionId, setSelectedRegionId] = useState<string>('SUB_22'); // Default to Saurashtra & Kutch (high-risk case)
   const [replayStepIndex, setReplayStepIndex] = useState<number>(0);
-  const [activeDemoStep, setActiveDemoStep] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -66,77 +65,15 @@ export const App: React.FC = () => {
     }
   };
 
-  const executeDemoStep = (stepNumber: number) => {
-    setActiveDemoStep(stepNumber);
-    switch (stepNumber) {
-      case 1:
-        // Dashboard D+5
-        setCurrentTab('dashboard');
-        setLeadTimeDays(5);
-        setDataMode('REPLAY');
-        break;
-      case 2:
-        // Historical event at T-5 (Biparjoy)
-        setCurrentTab('replay');
-        setReplayStepIndex(0);
-        break;
-      case 3:
-        // Region inspection (SUB_22 Saurashtra & Kutch)
-        setCurrentTab('dashboard');
-        setLeadTimeDays(5);
-        setSelectedRegionId('SUB_22');
-        break;
-      case 4:
-        // Why Distrust? (Empirical Drivers)
-        setCurrentTab('dashboard');
-        setSelectedRegionId('SUB_22');
-        break;
-      case 5:
-        // Jump to T-1
-        setCurrentTab('replay');
-        setReplayStepIndex(2);
-        break;
-      case 6:
-        // Reveal actual outcome (+143 mm bust)
-        setCurrentTab('replay');
-        setReplayStepIndex(3);
-        break;
-      case 7:
-        // Today's Real Disagreement (GFS vs AIFS)
-        setCurrentTab('realtime_disagreement');
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleTabChange = (tab: string) => {
-    setCurrentTab(tab);
-    if (tab === 'dashboard' || tab === 'risk_map') {
-      setActiveDemoStep(1);
-    } else if (tab === 'replay') {
-      setActiveDemoStep(2);
-    } else if (tab === 'realtime_disagreement') {
-      setActiveDemoStep(7);
-    } else {
-      // Supporting/audit pages: Forecaster Feedback, ML Architecture, Governance, Provenance, Providers, Case Studies
-      setActiveDemoStep(0);
-    }
-  };
-
   const selectedPrediction = predictions.find((p) => p.region_id === selectedRegionId) || predictions[0] || null;
 
   return (
     <Layout
       currentTab={currentTab}
-      setCurrentTab={handleTabChange}
-      leadTimeDays={leadTimeDays}
-      setLeadTimeDays={setLeadTimeDays}
+      setCurrentTab={setCurrentTab}
       dataMode={dataMode}
       setDataMode={setDataMode}
       initTime={forecastRun.slice(0, 10) + ' 00 UTC'}
-      activeDemoStep={activeDemoStep}
-      onExecuteDemoStep={executeDemoStep}
     >
       {/* View 1: Main Dashboard */}
       {currentTab === 'dashboard' && (
@@ -146,7 +83,7 @@ export const App: React.FC = () => {
             <div className="flex items-center space-x-3">
               <span className="font-bold text-slate-300 flex items-center space-x-1.5 font-mono uppercase tracking-wider text-[11px]">
                 <Sliders className="w-3.5 h-3.5 text-sky-400" />
-                <span>Lead Horizon:</span>
+                <span>LEAD HORIZON SCRUBBER:</span>
               </span>
               <div className="flex items-center space-x-1">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
@@ -168,7 +105,7 @@ export const App: React.FC = () => {
             {/* Variable & Risk Layer Selectors */}
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-1.5">
-                <span className="text-slate-400 font-mono text-[11px]">VAR:</span>
+                <span className="text-slate-400 font-mono text-[11px]">VARIABLE:</span>
                 <select
                   value={forecastVariable}
                   onChange={(e) => setForecastVariable(e.target.value)}
@@ -181,7 +118,7 @@ export const App: React.FC = () => {
               </div>
 
               <div className="flex items-center space-x-1.5">
-                <span className="text-slate-400 font-mono text-[11px]">LAYER:</span>
+                <span className="text-slate-400 font-mono text-[11px]">MAP LAYER:</span>
                 <select
                   value={activeLayer}
                   onChange={(e) => setActiveLayer(e.target.value)}
