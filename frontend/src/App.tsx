@@ -79,21 +79,22 @@ export const App: React.FC = () => {
       {currentTab === 'dashboard' && (
         <div className="h-full w-full flex flex-col overflow-hidden min-h-0 space-y-2">
           {/* Top Operational Bar */}
-          <div className="bg-[#111827] border border-slate-800 rounded-xl px-3 py-1.5 flex flex-wrap items-center justify-between gap-2 text-xs shadow-md shrink-0">
-            <div className="flex items-center space-x-3">
-              <span className="font-bold text-slate-300 flex items-center space-x-1.5 font-mono uppercase tracking-wider text-[11px]">
+          <div className="bg-[#111827] border border-slate-800 rounded-xl px-3 py-1.5 flex items-center justify-between gap-3 text-xs shadow-md shrink-0 w-full overflow-x-auto">
+            {/* Left Group: Lead Horizon */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className="font-bold text-slate-300 flex items-center gap-1.5 font-mono uppercase tracking-wider text-[11px] shrink-0">
                 <Sliders className="w-3.5 h-3.5 text-sky-400" />
-                <span>LEAD HORIZON SCRUBBER:</span>
+                <span>LEAD HORIZON</span>
               </span>
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center gap-1 shrink-0">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((d) => (
                   <button
                     key={d}
                     onClick={() => setLeadTimeDays(d)}
-                    className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition ${
+                    className={`w-[42px] h-[28px] rounded text-xs font-mono font-bold transition flex items-center justify-center shrink-0 ${
                       leadTimeDays === d
                         ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
-                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 hover:text-slate-200'
                     }`}
                   >
                     D+{d}
@@ -102,14 +103,14 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Variable & Risk Layer Selectors */}
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-slate-400 font-mono text-[11px]">VARIABLE:</span>
+            {/* Right Group: Variable, Map Layer, Refresh */}
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-400 font-mono text-[11px] shrink-0">Variable:</span>
                 <select
                   value={forecastVariable}
                   onChange={(e) => setForecastVariable(e.target.value)}
-                  className="bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
+                  className="bg-slate-900 border border-slate-700 hover:border-slate-600 rounded px-2.5 h-[28px] text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer min-w-[170px]"
                 >
                   <option value="precipitation_mm_day">Precipitation (mm/day)</option>
                   <option value="temperature_2m_c">2m Temperature (°C)</option>
@@ -117,12 +118,12 @@ export const App: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex items-center space-x-1.5">
-                <span className="text-slate-400 font-mono text-[11px]">MAP LAYER:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-400 font-mono text-[11px] shrink-0">Map Layer:</span>
                 <select
                   value={activeLayer}
                   onChange={(e) => setActiveLayer(e.target.value)}
-                  className="bg-slate-900 border border-slate-700 rounded px-2 py-0.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
+                  className="bg-slate-900 border border-slate-700 hover:border-slate-600 rounded px-2.5 h-[28px] text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer min-w-[240px]"
                 >
                   <option value="bust_probability">Calibrated Bust Risk P(Bust) (0–100%)</option>
                   <option value="ensemble_spread">NWP Ensemble Spread (mm)</option>
@@ -134,7 +135,7 @@ export const App: React.FC = () => {
               <button
                 onClick={loadData}
                 disabled={isLoading}
-                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                className="w-[28px] h-[28px] rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center shrink-0 border border-slate-700"
                 title="Refresh Forecast Run"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
