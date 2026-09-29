@@ -117,7 +117,7 @@ class TrainedReliabilityModel(BaseReliabilityModel):
                 self.is_loaded = True
                 self.is_real_model = True
                 self.version = "LightGBM-v1.0-Real-NWP-IMD-Calibrated"
-                self.prototype_badge = "REAL NWP + IMD TRAINED MODEL"
+                self.prototype_badge = "REAL GFS + IMD TRAINED MODEL"
                 print("[TrainedReliabilityModel] Successfully loaded REAL NWP + IMD Verification Model.")
                 return
             except Exception as e:
@@ -236,7 +236,7 @@ class TrainedReliabilityModel(BaseReliabilityModel):
             err_high = round(max(3.0, features.forecast_value * 0.45 + (features.lead_time_days * 3.5) + (abs(forecast_anomaly) * 0.3)), 1)
             
             return RawModelOutput(
-                prototype_badge="REAL NWP + IMD TRAINED MODEL",
+                prototype_badge=self.prototype_badge,
                 bust_probability=round(raw_prob, 3),
                 calibrated_probability=round(calib_prob, 3),
                 confidence=confidence,

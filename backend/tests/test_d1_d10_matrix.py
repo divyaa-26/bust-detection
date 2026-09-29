@@ -33,7 +33,7 @@ def test_model_metrics_endpoint_reflects_trained_model():
     response = client.get("/api/model/metrics")
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "TRAINED_OPERATIONAL"
+    assert "TRAINED" in data["status"]
     assert "LightGBM" in data["model_type"]
     assert data["metrics"]["brier_skill_score_vs_climatology"] > 0.0
     assert "baselines_comparison" in data

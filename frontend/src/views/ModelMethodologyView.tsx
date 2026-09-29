@@ -64,7 +64,7 @@ export const ModelMethodologyView: React.FC = () => {
         <div className="flex items-center space-x-2">
           <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-xs uppercase border border-emerald-500/30 flex items-center space-x-1">
             <Sparkles className="w-3 h-3 text-emerald-400" />
-            <span>STAGE 2 OPERATIONAL</span>
+            <span>REAL GFS + IMD TRAINED MODEL</span>
           </span>
           <h2 className="text-xl font-bold text-slate-100">ML Architecture & Real-Data Training Methodology</h2>
         </div>
@@ -73,11 +73,11 @@ export const ModelMethodologyView: React.FC = () => {
         </p>
       </div>
 
-      {/* Operational Model Status Notice */}
+      {/* Model Status Notice */}
       <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-xs">
         <div className="flex items-center space-x-2 text-emerald-400 font-bold mb-1">
           <ShieldCheck className="w-4 h-4" />
-          <span>Stage 2 Real NWP + IMD Operational Model Deployed</span>
+          <span>Real NWP + IMD Verification Model Active</span>
         </div>
         <p className="text-slate-300 leading-relaxed text-[11px]">
           The synthetic prototype model has been succeeded by a <strong>genuine historical ML model</strong> trained on 

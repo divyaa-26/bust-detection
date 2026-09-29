@@ -62,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {isReal ? (
           <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1 text-center font-mono text-[10px] text-emerald-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>REAL NWP + IMD TRAINED MODEL (STAGE 2 OPERATIONAL — NOAA GFS 0.25° + IMD DAILY GRIDDED VERIFICATION)</span>
+            <span>REAL GFS + IMD TRAINED MODEL (NOAA GFS 0.25° + IMD DAILY GRIDDED VERIFICATION)</span>
           </div>
         ) : (
           <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-1 text-center font-mono text-[10px] text-amber-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">

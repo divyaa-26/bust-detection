@@ -308,9 +308,9 @@ def get_model_metrics():
     
     if trained_model.is_real_model:
         return {
-            "status": "TRAINED_OPERATIONAL",
+            "status": "TRAINED_REAL_MODEL",
             "model_type": "LightGBM Binary Classifier + Isotonic Calibration (Real NWP + IMD Model)",
-            "model_badge": "REAL NWP + IMD TRAINED MODEL",
+            "model_badge": "REAL GFS + IMD TRAINED MODEL",
             "is_real_model": True,
             "dataset": {
                 "training_samples": model_info.get("training_samples", 7200),
