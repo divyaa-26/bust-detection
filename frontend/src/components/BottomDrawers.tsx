@@ -33,7 +33,7 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
   const [modelMetrics, setModelMetrics] = useState<any>(null);
 
   useEffect(() => {
-    if (activeTab === 'matrix' && !matrixData) {
+    if ((activeTab === 'matrix' || activeTab === 'degradation') && !matrixData) {
       setIsLoadingMatrix(true);
       api.getRegionLeadMatrix()
         .then((data) => {
@@ -280,7 +280,12 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
               <div className="grid grid-cols-10 gap-2 text-center text-xs">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((day) => {
                   const isCurrent = day === leadTimeDays;
-                  const estimatedRisk = Math.min(94, Math.round(18 + Math.pow(day, 1.45) * 2.8));
+                  const regCell = matrixData?.matrix?.find(
+                    (c) => c.region_id === (selectedPrediction?.region_id || 'SUB_22') && c.lead_time_days === day
+                  );
+                  const estimatedRisk = regCell !== undefined
+                    ? Math.round(regCell.bust_probability * 100)
+                    : Math.min(94, Math.round(18 + Math.pow(day, 1.45) * 2.8));
                   return (
                     <div
                       key={day}

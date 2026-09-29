@@ -4,29 +4,26 @@ import { api } from '../services/api';
 
 export const ValidationView: React.FC = () => {
   const [metricsData, setMetricsData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setIsLoading(true);
     api.getModelMetrics()
-      .then((data) => setMetricsData(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setMetricsData(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false);
+      });
   }, []);
 
   const isReal = metricsData?.is_real_model;
   const metrics = metricsData?.metrics || {};
   const dataset = metricsData?.dataset || {};
 
-  const calibBins = metricsData?.active_model_info?.calibration_bins || metricsData?.calibration_bins || metricsData?.calibration?.reliability_bins || [
-    { bin_center: 0.05, forecast_prob: 0.06, observed_frequency: 0.07, sample_count: 142 },
-    { bin_center: 0.15, forecast_prob: 0.15, observed_frequency: 0.18, sample_count: 210 },
-    { bin_center: 0.25, forecast_prob: 0.26, observed_frequency: 0.24, sample_count: 185 },
-    { bin_center: 0.35, forecast_prob: 0.34, observed_frequency: 0.38, sample_count: 160 },
-    { bin_center: 0.45, forecast_prob: 0.46, observed_frequency: 0.44, sample_count: 115 },
-    { bin_center: 0.55, forecast_prob: 0.54, observed_frequency: 0.59, sample_count: 95 },
-    { bin_center: 0.65, forecast_prob: 0.67, observed_frequency: 0.65, sample_count: 78 },
-    { bin_center: 0.75, forecast_prob: 0.76, observed_frequency: 0.72, sample_count: 54 },
-    { bin_center: 0.85, forecast_prob: 0.84, observed_frequency: 0.88, sample_count: 36 },
-    { bin_center: 0.95, forecast_prob: 0.93, observed_frequency: 0.91, sample_count: 22 },
-  ];
+  const calibBins = metricsData?.active_model_info?.calibration_bins || metricsData?.calibration_bins || metricsData?.calibration?.reliability_bins || [];
 
   return (
     <div className="max-w-[1700px] mx-auto p-6 space-y-6">
@@ -70,9 +67,9 @@ export const ValidationView: React.FC = () => {
         <p className="text-slate-300 leading-relaxed text-[11px]">
           {isReal ? (
             <>
-              Trained on <strong>7,200 genuine NOAA GFS forecast-verification pairs</strong> from Monsoon 2023, 
-              calibrated via Isotonic Regression on <strong>3,600 pairs</strong> from early/peak Monsoon 2024, 
-              and evaluated out-of-time on <strong>2,880 held-out pairs</strong> from late Monsoon 2024 across 38 unique initialization dates. 
+              Trained on <strong>{dataset.training_samples?.toLocaleString() ?? '—'} genuine NOAA GFS forecast-verification pairs</strong> from Monsoon 2023, 
+              calibrated via Isotonic Regression on <strong>{dataset.validation_samples?.toLocaleString() ?? '—'} pairs</strong> from early/peak Monsoon 2024, 
+              and evaluated out-of-time on <strong>{dataset.test_samples?.toLocaleString() ?? '—'} held-out pairs</strong> from late Monsoon 2024 across {dataset.initialization_dates ?? '—'} unique initialization dates. 
               Zero future observation or analogue outcome leakage.
             </>
           ) : (
@@ -88,12 +85,12 @@ export const ValidationView: React.FC = () => {
         <div className="p-4 rounded-xl bg-[#111827] border border-slate-800 shadow-lg">
           <span className="text-[10px] font-mono uppercase text-slate-400">Calibrated Brier Score</span>
           <div className="text-2xl font-bold font-mono text-emerald-400 mt-1">
-            {metrics.brier_score_calibrated !== undefined ? metrics.brier_score_calibrated.toFixed(4) : "0.0362"}
+            {metrics.brier_score_calibrated !== undefined ? metrics.brier_score_calibrated.toFixed(4) : (isLoading ? "Loading..." : "—")}
           </div>
           <div className="text-[10px] text-slate-500 mt-1">
-            Climatology: {metrics.brier_score_climatology !== undefined ? metrics.brier_score_climatology.toFixed(4) : "0.0380"} 
+            Climatology: {metrics.brier_score_climatology !== undefined ? metrics.brier_score_climatology.toFixed(4) : (isLoading ? "..." : "—")} 
             <span className="text-emerald-400 font-bold ml-1">
-              (BSS: {metrics.brier_skill_score_vs_climatology !== undefined ? `+${(metrics.brier_skill_score_vs_climatology * 100).toFixed(1)}%` : "+4.7%"})
+              (BSS: {metrics.brier_skill_score_vs_climatology !== undefined ? `+${(metrics.brier_skill_score_vs_climatology * 100).toFixed(2)}%` : (isLoading ? "..." : "—")})
             </span>
           </div>
         </div>
@@ -101,7 +98,7 @@ export const ValidationView: React.FC = () => {
         <div className="p-4 rounded-xl bg-[#111827] border border-slate-800 shadow-lg">
           <span className="text-[10px] font-mono uppercase text-slate-400">Out-of-Time ROC-AUC</span>
           <div className="text-2xl font-bold font-mono text-sky-400 mt-1">
-            {metrics.roc_auc !== undefined ? metrics.roc_auc.toFixed(4) : "0.7823"}
+            {metrics.roc_auc !== undefined ? metrics.roc_auc.toFixed(4) : (isLoading ? "Loading..." : "—")}
           </div>
           <div className="text-[10px] text-slate-500 mt-1">Measured strictly on held-out Late Monsoon 2024</div>
         </div>
@@ -109,7 +106,7 @@ export const ValidationView: React.FC = () => {
         <div className="p-4 rounded-xl bg-[#111827] border border-slate-800 shadow-lg">
           <span className="text-[10px] font-mono uppercase text-slate-400">Expected Calibration Error</span>
           <div className="text-2xl font-bold font-mono text-cyan-400 mt-1">
-            {metrics.expected_calibration_error !== undefined ? metrics.expected_calibration_error.toFixed(4) : "0.0152"}
+            {metrics.expected_calibration_error !== undefined ? metrics.expected_calibration_error.toFixed(4) : (isLoading ? "Loading..." : "—")}
           </div>
           <div className="text-[10px] text-slate-500 mt-1">10-bin empirical probability calibration alignment</div>
         </div>
@@ -117,9 +114,13 @@ export const ValidationView: React.FC = () => {
         <div className="p-4 rounded-xl bg-[#111827] border border-slate-800 shadow-lg">
           <span className="text-[10px] font-mono uppercase text-slate-400">Precision-Recall AUC</span>
           <div className="text-2xl font-bold font-mono text-amber-400 mt-1">
-            {metrics.pr_auc !== undefined ? metrics.pr_auc.toFixed(4) : "0.1326"}
+            {metrics.pr_auc !== undefined ? metrics.pr_auc.toFixed(4) : (isLoading ? "Loading..." : "—")}
           </div>
-          <div className="text-[10px] text-slate-500 mt-1">3.3x skill gain over 3.96% empirical test prevalence</div>
+          <div className="text-[10px] text-slate-500 mt-1">
+            {metrics.pr_auc !== undefined && dataset.test_bust_base_rate 
+              ? `${(metrics.pr_auc / (parseFloat(dataset.test_bust_base_rate) / 100)).toFixed(1)}x skill gain over ${dataset.test_bust_base_rate} empirical test prevalence` 
+              : "Skill gain over empirical test prevalence"}
+          </div>
         </div>
       </div>
 
@@ -178,7 +179,9 @@ export const ValidationView: React.FC = () => {
             <span>Observed Empirical Frequency</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-emerald-400 font-bold">ECE: 0.0152 (1.52%)</span>
+            <span className="text-emerald-400 font-bold">
+              ECE: {metrics.expected_calibration_error !== undefined ? `${metrics.expected_calibration_error.toFixed(4)} (${(metrics.expected_calibration_error * 100).toFixed(2)}%)` : (isLoading ? "Loading..." : "—")}
+            </span>
           </div>
         </div>
       </div>

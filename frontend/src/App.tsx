@@ -216,7 +216,7 @@ export const App: React.FC = () => {
                     onChange={(e) => setActiveLayer(e.target.value)}
                     className="bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold"
                   >
-                    <option value="bust_probability">Prototype Risk Score (0–100)</option>
+                    <option value="bust_probability">Calibrated Bust Risk P(Bust) (0–100%)</option>
                     <option value="ensemble_spread">NWP Ensemble Spread (mm)</option>
                     <option value="model_disagreement">Inter-Model Disagreement (mm)</option>
                     <option value="forecast_value">Forecast Raw Value (mm/day)</option>

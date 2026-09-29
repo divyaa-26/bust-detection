@@ -209,26 +209,26 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
       {/* Floating Map Legend */}
       <div className="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-lg p-3 text-[11px] shadow-xl z-10 font-mono">
         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
-          <span>{activeLayer === 'bust_probability' ? 'PROTOTYPE RISK SCORE' : activeLayer.replace('_', ' ').toUpperCase()}</span>
+          <span>{activeLayer === 'bust_probability' ? 'CALIBRATED P(BUST) RISK' : activeLayer.replace('_', ' ').toUpperCase()}</span>
           <span className="text-sky-400">D+{leadTimeDays}</span>
         </div>
         {activeLayer === 'bust_probability' ? (
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 rounded-sm bg-[#10b981]"></span>
-              <span className="text-slate-200">Low Risk (&lt; 28/100)</span>
+              <span className="text-slate-200">Low Risk (&lt; 25% | Conf &gt; 75%)</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 rounded-sm bg-[#f59e0b]"></span>
-              <span className="text-slate-200">Moderate Risk (28–50/100)</span>
+              <span className="text-slate-200">Moderate Risk (25–45%)</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 rounded-sm bg-[#ea580c]"></span>
-              <span className="text-slate-200">High Risk (50–75/100)</span>
+              <span className="text-slate-200">High Review (45–70%)</span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 rounded-sm bg-[#dc2626]"></span>
-              <span className="text-slate-200">Severe Risk (&gt; 75/100)</span>
+              <span className="text-slate-200">Critical Inspection (&gt; 70%)</span>
             </div>
           </div>
         ) : activeLayer === 'ensemble_spread' ? (
