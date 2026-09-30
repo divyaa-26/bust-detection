@@ -41,10 +41,12 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
       center: [79.2, 22.8],
       zoom: 4.1,
       minZoom: 3.5,
-      maxZoom: 9
+      maxZoom: 9,
+      attributionControl: false
     });
 
     map.current.addControl(new maplibregl.NavigationControl(), 'top-left');
+    map.current.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
     map.current.on('load', () => {
       setMapLoaded(true);
@@ -127,7 +129,7 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
         source: 'india-subdivisions',
         paint: {
           'fill-color': getFillColorExpression(activeLayer),
-          'fill-opacity': 0.68
+          'fill-opacity': 0.72
         }
       });
 
@@ -137,20 +139,34 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
         type: 'line',
         source: 'india-subdivisions',
         paint: {
-          'line-color': '#475569',
+          'line-color': '#64748b',
           'line-width': 1.2
         }
       });
 
-      // Add Selected Region Highlight Layer
+      // Add Selected Region Outer Glow Layer
+      map.current.addLayer({
+        id: 'subdivisions-selected-glow',
+        type: 'line',
+        source: 'india-subdivisions',
+        filter: ['==', 'subdivision_id', selectedRegionId || ''],
+        paint: {
+          'line-color': '#0284c7',
+          'line-width': 6,
+          'line-opacity': 0.8,
+          'line-blur': 1.5
+        }
+      });
+
+      // Add Selected Region Sharp Outline Layer
       map.current.addLayer({
         id: 'subdivisions-selected-outline',
         type: 'line',
         source: 'india-subdivisions',
         filter: ['==', 'subdivision_id', selectedRegionId || ''],
         paint: {
-          'line-color': '#38BDF8',
-          'line-width': 3.5
+          'line-color': '#ffffff',
+          'line-width': 2.5
         }
       });
 
@@ -197,6 +213,9 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
     if (map.current.getLayer('subdivisions-fill')) {
       map.current.setPaintProperty('subdivisions-fill', 'fill-color', getFillColorExpression(activeLayer));
     }
+    if (map.current.getLayer('subdivisions-selected-glow')) {
+      map.current.setFilter('subdivisions-selected-glow', ['==', 'subdivision_id', selectedRegionId || '']);
+    }
     if (map.current.getLayer('subdivisions-selected-outline')) {
       map.current.setFilter('subdivisions-selected-outline', ['==', 'subdivision_id', selectedRegionId || '']);
     }
@@ -233,14 +252,14 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
         115.6, '#dc2626' // > 115.6mm (Very Heavy)
       ];
     } else {
-      // Default: Bust Probability
+      // Default: Bust Probability (Calibrated P(Bust) Meteorological Thresholds)
       return [
         'step',
         ['get', 'bust_prob'],
-        '#10b981', // < 0.25 (Low Risk - green)
-        0.25, '#f59e0b', // 0.25 - 0.45 (Moderate - amber)
-        0.45, '#ea580c', // 0.45 - 0.70 (High - orange)
-        0.70, '#dc2626'  // > 0.70 (Critical Inspection - crimson)
+        '#10b981', // < 0.08 (Low Risk - green)
+        0.08, '#f59e0b', // 0.08 - 0.14 (Monitor - amber)
+        0.14, '#ea580c', // 0.14 - 0.24 (High Review - orange)
+        0.24, '#dc2626'  // >= 0.24 (Critical Inspection - crimson)
       ];
     }
   }
@@ -250,64 +269,64 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
       <div ref={mapContainer} className="w-full h-full min-h-0 flex-1" style={{ width: '100%', height: '100%' }} />
 
       {/* Floating Map Legend */}
-      <div className="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-lg p-3 text-[11px] shadow-xl z-10 font-mono">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
-          <span>{activeLayer === 'bust_probability' ? 'CALIBRATED P(BUST) RISK' : activeLayer.replace('_', ' ').toUpperCase()}</span>
-          <span className="text-sky-400">D+{leadTimeDays}</span>
+      <div className="absolute bottom-4 left-4 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-lg p-2.5 text-[11px] shadow-xl z-10 font-mono max-w-[230px]">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between pb-1 border-b border-slate-800">
+          <span>{activeLayer === 'bust_probability' ? 'P(BUST) RISK' : activeLayer.replace('_', ' ').toUpperCase()}</span>
+          <span className="text-sky-400 font-bold">D+{leadTimeDays}</span>
         </div>
         {activeLayer === 'bust_probability' ? (
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#10b981]"></span>
-              <span className="text-slate-200">Low Risk (&lt; 25% | Conf &gt; 75%)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#10b981] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">Low Risk (&lt; 8% | &lt;2.0× Base)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#f59e0b]"></span>
-              <span className="text-slate-200">Moderate Risk (25–45%)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#f59e0b] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">Monitor (8–14% | 2.0–3.5× Base)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#ea580c]"></span>
-              <span className="text-slate-200">High Review (45–70%)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#ea580c] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">High Review (14–24% | 3.5–6.0× Base)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#dc2626]"></span>
-              <span className="text-slate-200">Critical Inspection (&gt; 70%)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#dc2626] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">Critical Inspection (≥ 24% | ≥6.0× Base)</span>
             </div>
           </div>
         ) : activeLayer === 'ensemble_spread' ? (
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#0284c7]"></span>
-              <span className="text-slate-200">&lt; 8 mm (Coherent)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#0284c7] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">&lt; 8 mm (Coherent)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#f59e0b]"></span>
-              <span className="text-slate-200">15–22 mm (Spread)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#f59e0b] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">15–22 mm (Spread)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#b91c1c]"></span>
-              <span className="text-slate-200">&gt; 28 mm (Divergent)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#b91c1c] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">&gt; 28 mm (Divergent)</span>
             </div>
           </div>
         ) : (
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#10b981]"></span>
-              <span className="text-slate-200">Model Consensus (&lt; 5mm)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#10b981] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">Model Consensus (&lt; 5mm)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 rounded-sm bg-[#dc2626]"></span>
-              <span className="text-slate-200">Inter-Model Discord (&gt; 18mm)</span>
+              <span className="w-2.5 h-2.5 rounded-sm bg-[#dc2626] shrink-0"></span>
+              <span className="text-slate-200 text-[10px]">Inter-Model Discord (&gt; 18mm)</span>
             </div>
           </div>
         )}
-        <div className="pt-2 mt-2 border-t border-slate-800 text-[10px] space-y-1">
-          <div className="text-emerald-400 font-bold tracking-tight">
-            REAL MODEL OUTPUT — LIGHTGBM + ISOTONIC CALIBRATION
-          </div>
-          <div className="text-slate-500">
-            Source: IMD 36 Subdivisions • MapLibre GL
-          </div>
+        <div className="pt-1.5 mt-1.5 border-t border-slate-800 text-[10px] flex items-center justify-between">
+          <span className="text-emerald-400 font-semibold text-[9px]">
+            REAL MODEL
+          </span>
+          <span className="text-slate-400 text-[9px]">
+            IMD 36 Subdivisions
+          </span>
         </div>
       </div>
     </div>

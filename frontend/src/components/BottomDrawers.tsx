@@ -147,15 +147,14 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="text-slate-400 border-b border-slate-800 text-[11px] uppercase tracking-wider font-mono">
-                    <th className="py-2 px-3">Rank</th>
-                    <th className="py-2 px-3">Subdivision</th>
-                    <th className="py-2 px-3">Lead</th>
-                    <th className="py-2 px-3">P(Bust)</th>
-                    <th className="py-2 px-3">Confidence</th>
-                    <th className="py-2 px-3">Error Range</th>
-                    <th className="py-2 px-3">Top Vulnerability Driver</th>
-                    <th className="py-2 px-3">Priority Action</th>
-                    <th className="py-2 px-3">Action</th>
+                    <th className="py-2.5 px-3">Rank</th>
+                    <th className="py-2.5 px-3">Subdivision</th>
+                    <th className="py-2.5 px-3">Lead</th>
+                    <th className="py-2.5 px-3">P(Bust)</th>
+                    <th className="py-2.5 px-3">Risk Elevation</th>
+                    <th className="py-2.5 px-3">Error Range</th>
+                    <th className="py-2.5 px-3">Primary Driver</th>
+                    <th className="py-2.5 px-3">Priority Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
@@ -163,25 +162,44 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                     <tr 
                       key={item.region_id}
                       onClick={() => onSelectRegion(item.region_id)}
-                      className={`hover:bg-slate-800/60 cursor-pointer transition ${
-                        selectedPrediction?.region_id === item.region_id ? 'bg-sky-950/40 border-l-2 border-sky-400' : ''
+                      className={`hover:bg-slate-800/80 cursor-pointer transition select-none ${
+                        selectedPrediction?.region_id === item.region_id ? 'bg-sky-950/60 border-l-4 border-l-sky-400 text-slate-100' : 'text-slate-300'
                       }`}
                     >
-                      <td className="py-2 px-3 font-mono font-bold text-slate-300">#{item.rank}</td>
-                      <td className="py-2 px-3 font-semibold text-slate-100">
-                        {item.region_name} <span className="font-mono text-[10px] text-slate-500">({item.region_id})</span>
+                      <td className="py-2.5 px-3 font-mono font-bold text-slate-200">#{item.rank}</td>
+                      <td className="py-2.5 px-3 font-semibold text-slate-100">
+                        {item.region_name} <span className="font-mono text-[11px] text-slate-400">({item.region_id})</span>
                       </td>
-                      <td className="py-2 px-3 font-mono text-slate-300">D+{item.lead_time_days}</td>
-                      <td className="py-2 px-3 font-mono font-bold text-rose-400">
-                        {Math.round(item.bust_probability * 100)}%
+                      <td className="py-2.5 px-3 font-mono text-slate-300">D+{item.lead_time_days}</td>
+                      <td className="py-2.5 px-3 font-mono">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${
+                            item.bust_probability >= 0.24 ? 'bg-rose-500' :
+                            item.bust_probability >= 0.14 ? 'bg-orange-500' :
+                            item.bust_probability >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
+                          }`} />
+                          <span className="font-bold text-rose-400">{(item.bust_probability * 100).toFixed(1)}%</span>
+                        </div>
                       </td>
-                      <td className="py-2 px-3 font-mono font-bold text-emerald-400">
-                        {Math.round((1.0 - item.bust_probability) * 100)}%
+                      <td className="py-2.5 px-3 font-mono">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${
+                            item.bust_probability >= 0.24 ? 'bg-rose-500' :
+                            item.bust_probability >= 0.14 ? 'bg-orange-500' :
+                            item.bust_probability >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
+                          }`} />
+                          <span className={`font-bold ${
+                            item.bust_probability >= 0.24 ? 'text-rose-400' :
+                            item.bust_probability >= 0.14 ? 'text-orange-400' :
+                            item.bust_probability >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
+                          }`}>{(item.bust_probability / 0.04).toFixed(1)}×</span>
+                          <span className="text-[10px] text-slate-500 font-sans">base</span>
+                        </div>
                       </td>
-                      <td className="py-2 px-3 font-mono text-amber-300">{item.expected_error_str}</td>
-                      <td className="py-2 px-3 text-slate-300">{item.top_driver}</td>
-                      <td className="py-2 px-3">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                      <td className="py-2.5 px-3 font-mono text-amber-300">{item.expected_error_str}</td>
+                      <td className="py-2.5 px-3 text-slate-200">{item.top_driver}</td>
+                      <td className="py-2.5 px-3">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded border tracking-wide ${
                           item.operational_priority === 'CRITICAL — INSPECTION REQUIRED'
                             ? 'bg-red-500/20 text-red-400 border-red-500/40'
                             : item.operational_priority === 'HIGH — REVIEW'
@@ -192,17 +210,6 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                         }`}>
                           {item.operational_priority}
                         </span>
-                      </td>
-                      <td className="py-2 px-3">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectRegion(item.region_id);
-                          }}
-                          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-sky-400 text-[11px] font-semibold border border-slate-700"
-                        >
-                          Inspect
-                        </button>
                       </td>
                     </tr>
                   ))}
@@ -258,12 +265,13 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                               const p = cell ? cell.bust_probability : 0.0;
                               const pPct = Math.round(p * 100);
                               const cellBg = 
-                                p >= 0.70 ? 'bg-red-600/80 text-white font-bold' :
-                                p >= 0.45 ? 'bg-orange-500/80 text-white font-bold' :
-                                p >= 0.25 ? 'bg-amber-400/80 text-slate-950 font-bold' :
+                                p >= 0.24 ? 'bg-red-600/80 text-white font-bold' :
+                                p >= 0.14 ? 'bg-orange-500/80 text-white font-bold' :
+                                p >= 0.08 ? 'bg-amber-400/80 text-slate-950 font-bold' :
                                 'bg-emerald-600/20 text-emerald-300';
+                              const elev = (p / 0.04).toFixed(1);
                               return (
-                                <td key={d} className="py-1 px-1" title={`${regName} D+${d}: P(Bust)=${pPct}%, Conf=${100-pPct}%`}>
+                                <td key={d} className="py-1 px-1" title={`${regName} D+${d}: P(Bust)=${pPct}%, Risk Elevation=${elev}×`}>
                                   <div className={`rounded py-0.5 px-1 ${cellBg}`}>
                                     {pPct}%
                                   </div>
@@ -316,9 +324,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                         <div className="my-2 h-16 bg-slate-950 rounded flex items-end p-1 justify-center">
                           <div
                             className={`w-full rounded transition-all duration-300 ${
-                              estimatedRisk > 70 ? 'bg-red-500' :
-                              estimatedRisk > 45 ? 'bg-orange-400' :
-                              estimatedRisk >= 25 ? 'bg-amber-400' : 'bg-emerald-400'
+                              estimatedRisk >= 24 ? 'bg-red-500' :
+                              estimatedRisk >= 14 ? 'bg-orange-400' :
+                              estimatedRisk >= 8 ? 'bg-amber-400' : 'bg-emerald-400'
                             }`}
                             style={{ height: `${Math.max(4, estimatedRisk)}%` }}
                           />

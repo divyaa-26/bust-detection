@@ -91,10 +91,10 @@ export const App: React.FC = () => {
                   <button
                     key={d}
                     onClick={() => setLeadTimeDays(d)}
-                    className={`w-[42px] h-[28px] rounded text-xs font-mono font-bold transition flex items-center justify-center shrink-0 ${
+                    className={`w-[38px] h-[26px] rounded text-xs font-mono font-bold transition flex items-center justify-center shrink-0 ${
                       leadTimeDays === d
-                        ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30'
-                        : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800 hover:text-slate-200'
+                        ? 'bg-sky-500 text-white shadow-md shadow-sky-500/30 border border-sky-400'
+                        : 'bg-slate-900/90 hover:bg-slate-800 text-slate-400 border border-slate-800 hover:text-slate-200'
                     }`}
                   >
                     D+{d}
@@ -103,14 +103,14 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Group: Variable, Map Layer, Refresh */}
-            <div className="flex items-center gap-2.5 shrink-0">
-              <div className="flex items-center gap-1.5">
+            {/* Right Group: Variable, Map Layer, Refresh (Secondary Controls) */}
+            <div className="flex items-center gap-2 shrink-0 bg-slate-900/60 border border-slate-800/80 rounded-lg p-1">
+              <div className="flex items-center gap-1.5 pl-1.5">
                 <span className="text-slate-400 font-mono text-[11px] shrink-0">Variable:</span>
                 <select
                   value={forecastVariable}
                   onChange={(e) => setForecastVariable(e.target.value)}
-                  className="bg-slate-900 border border-slate-700 hover:border-slate-600 rounded px-2.5 h-[28px] text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer min-w-[170px]"
+                  className="bg-slate-950 border border-slate-700/80 hover:border-slate-600 rounded px-2 h-[26px] text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-medium cursor-pointer min-w-[160px]"
                 >
                   <option value="precipitation_mm_day">Precipitation (mm/day)</option>
                   <option value="temperature_2m_c">2m Temperature (°C)</option>
@@ -118,12 +118,14 @@ export const App: React.FC = () => {
                 </select>
               </div>
 
+              <div className="h-4 w-px bg-slate-800 shrink-0" />
+
               <div className="flex items-center gap-1.5">
                 <span className="text-slate-400 font-mono text-[11px] shrink-0">Map Layer:</span>
                 <select
                   value={activeLayer}
                   onChange={(e) => setActiveLayer(e.target.value)}
-                  className="bg-slate-900 border border-slate-700 hover:border-slate-600 rounded px-2.5 h-[28px] text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-semibold cursor-pointer min-w-[240px]"
+                  className="bg-slate-950 border border-slate-700/80 hover:border-slate-600 rounded px-2 h-[26px] text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-medium cursor-pointer min-w-[220px]"
                 >
                   <option value="bust_probability">Calibrated Bust Risk P(Bust) (0–100%)</option>
                   <option value="ensemble_spread">NWP Ensemble Spread (mm)</option>
@@ -135,7 +137,7 @@ export const App: React.FC = () => {
               <button
                 onClick={loadData}
                 disabled={isLoading}
-                className="w-[28px] h-[28px] rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition flex items-center justify-center shrink-0 border border-slate-700"
+                className="w-[26px] h-[26px] rounded bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center shrink-0 border border-slate-700/80"
                 title="Refresh Forecast Run"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />

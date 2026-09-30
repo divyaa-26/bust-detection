@@ -30,15 +30,15 @@ export const Layout: React.FC<LayoutProps> = ({
   children
 }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Main Dashboard', badge: 'MAP', badgeColor: 'text-primary bg-surface-container', icon: Map },
-    { id: 'realtime_disagreement', label: 'Multi-Model Disagreement', badge: dataMode === 'REAL' ? 'LIVE' : 'VERIFIED', badgeColor: 'text-primary-fixed bg-surface-container', icon: Radio },
-    { id: 'replay', label: 'Historical Replay & Bust Archives', badge: 'ARCHIVE', badgeColor: 'text-tertiary-fixed-dim bg-surface-container', icon: History },
-    { id: 'case_studies', label: 'Event Case Studies', badge: 'CASE', badgeColor: 'text-sky-300 bg-sky-950/40', icon: BookOpen },
-    { id: 'validation', label: 'Governance & Validation', badge: 'AUDIT', badgeColor: 'text-emerald-400 bg-emerald-950/40', icon: BarChart2 },
-    { id: 'methodology', label: 'Model Architecture & ML Specs', badge: 'METHO', badgeColor: 'text-purple-300 bg-purple-950/40', icon: BookOpen },
-    { id: 'feedback', label: 'Forecaster Queue & Dispatch', badge: 'DISPATCH', badgeColor: 'text-amber-300 bg-amber-950/40', icon: Send },
-    { id: 'providers', label: 'Data Providers & OGC EDR', badge: 'INGEST', badgeColor: 'text-outline bg-surface-container', icon: Database },
-    { id: 'governance', label: 'Provenance & Reproducibility', badge: 'LEGAL', badgeColor: 'text-sky-300 bg-sky-950/40', icon: FileCheck2 },
+    { id: 'dashboard', label: 'Main Dashboard', badge: 'MAP', icon: Map },
+    { id: 'realtime_disagreement', label: 'Multi-Model Disagreement', badge: dataMode === 'REAL' ? 'LIVE' : 'VERIFIED', icon: Radio },
+    { id: 'replay', label: 'Historical Replay & Bust Archives', badge: 'ARCHIVE', icon: History },
+    { id: 'case_studies', label: 'Event Case Studies', badge: 'CASE', icon: BookOpen },
+    { id: 'validation', label: 'Governance & Validation', badge: 'AUDIT', icon: BarChart2 },
+    { id: 'methodology', label: 'Model Architecture & ML Specs', badge: 'METHOD', icon: BookOpen },
+    { id: 'feedback', label: 'Forecaster Queue & Dispatch', badge: 'DISPATCH', icon: Send },
+    { id: 'providers', label: 'Data Providers & OGC EDR', badge: 'INGEST', icon: Database },
+    { id: 'governance', label: 'Provenance & Reproducibility', badge: 'LEGAL', icon: FileCheck2 },
   ];
 
   return (
@@ -56,25 +56,25 @@ export const Layout: React.FC<LayoutProps> = ({
         </div>
       )}
 
-      {/* Top Header - AETHER-DISPUTE Workstation Banner */}
+      {/* Top Header - AETHER-CAST Workstation Banner */}
       <header className="sticky top-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md border-b border-outline-variant shadow-lg">
         <div className="h-16 w-full px-4 flex items-center justify-between gap-4">
           {/* Logo & Workstation Branding */}
           <div className="flex items-center space-x-3 min-w-max">
-            <div className="p-2 bg-primary/10 border border-primary-container/40 rounded-lg text-primary-container">
+            <div className="p-2 bg-sky-500/10 border border-sky-500/30 rounded-lg text-sky-400">
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
             <div className="flex flex-col whitespace-nowrap">
               <div className="flex items-center space-x-2">
-                <span className="font-headline-md font-semibold tracking-tight text-primary text-sm sm:text-base">
-                  AETHER-DISPUTE
+                <span className="font-headline-md font-semibold tracking-tight text-slate-100 text-sm sm:text-base">
+                  AETHER-CAST
                 </span>
-                <span className="font-label-caps uppercase text-on-surface-variant text-[10px]">
+                <span className="font-label-caps uppercase text-slate-400 text-[10px]">
                   // MET-ENSEMBLE INDIA
                 </span>
               </div>
-              <span className="font-label-caps uppercase text-outline text-[9px]">
-                FORECAST BUST DETECTION SYSTEM • SIH26079
+              <span className="font-label-caps uppercase text-slate-400 text-[10px]">
+                FORECAST BUST DETECTION &amp; RISK ANALYTICS • SIH26079
               </span>
             </div>
           </div>
@@ -82,8 +82,8 @@ export const Layout: React.FC<LayoutProps> = ({
           {/* Top Right Controls: Synoptic Time */}
           <div className="flex items-center space-x-3 shrink-0 text-xs font-mono">
             <div className="flex flex-col text-right">
-              <span className="text-[9px] uppercase text-outline">SYNOPTIC RUN</span>
-              <span className="text-primary-fixed text-[11px] font-bold">{initTime}</span>
+              <span className="text-[10px] uppercase text-slate-400">SYNOPTIC RUN</span>
+              <span className="text-sky-300 text-xs font-bold">{initTime}</span>
             </div>
           </div>
         </div>
@@ -94,10 +94,10 @@ export const Layout: React.FC<LayoutProps> = ({
         {/* Left Sidebar: Avi's Workstation Rail / Atmospheric HUD */}
         <aside className="w-64 bg-surface-container-lowest border-r border-outline-variant flex flex-col shrink-0 z-40 shadow-xl">
           <div className="px-4 py-3 border-b border-outline-variant flex flex-col">
-            <span className="font-label-caps text-label-caps uppercase text-outline text-[10px]">
+            <span className="font-label-caps text-label-caps uppercase text-slate-400 text-[10px]">
               WORKSTATION RAIL
             </span>
-            <span className="font-headline-md font-semibold text-on-surface text-sm">
+            <span className="font-headline-md font-semibold text-slate-200 text-sm">
               Atmospheric HUD
             </span>
           </div>
@@ -112,16 +112,18 @@ export const Layout: React.FC<LayoutProps> = ({
                   onClick={() => setCurrentTab(item.id)}
                   className={`w-full px-3 py-2 rounded text-left font-body-md text-xs transition-colors flex items-center justify-between group ${
                     isActive
-                      ? 'bg-primary-container text-on-primary-container font-semibold shadow-sm'
-                      : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
+                      ? 'bg-sky-500/15 text-sky-200 border-l-2 border-sky-400 font-semibold shadow-sm'
+                      : 'text-slate-300 hover:bg-slate-800/60 hover:text-slate-100'
                   }`}
                 >
                   <div className="flex items-center space-x-2.5 truncate">
-                    <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-on-primary-container' : 'text-outline group-hover:text-primary-fixed'}`} />
+                    <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-sky-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
                     <span className="truncate">{item.label}</span>
                   </div>
-                  <span className={`font-label-badge uppercase px-1.5 py-0.5 rounded text-[9px] font-mono shrink-0 ml-1 ${
-                    isActive ? 'bg-on-primary-container/20 text-on-primary-container font-bold' : item.badgeColor
+                  <span className={`font-label-badge uppercase px-1.5 py-0.5 rounded text-[10px] font-mono shrink-0 ml-1 border transition-colors ${
+                    isActive 
+                      ? 'bg-sky-500/20 text-sky-300 border-sky-500/30 font-bold' 
+                      : 'bg-slate-800/80 text-slate-400 border-slate-700/50 group-hover:text-slate-300'
                   }`}>
                     {item.badge}
                   </span>
@@ -131,21 +133,21 @@ export const Layout: React.FC<LayoutProps> = ({
           </nav>
 
           {/* Bottom Telemetry HUD */}
-          <div className="p-3 bg-surface-container-low/70 border-t border-outline-variant text-[10px] font-mono space-y-1">
+          <div className="p-3 bg-surface-container-low/70 border-t border-outline-variant text-[10px] font-mono space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-outline uppercase text-[9px]">INGEST LATENCY</span>
-              <span className="text-primary-fixed font-bold">42ms</span>
+              <span className="text-slate-400 uppercase text-[10px]">INGEST LATENCY</span>
+              <span className="text-slate-200 font-bold">42ms</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-outline uppercase text-[9px]">GRID RESOLUTION</span>
-              <span className="text-on-surface font-bold">0.25° GFS / IMD</span>
+              <span className="text-slate-400 uppercase text-[10px]">GRID RESOLUTION</span>
+              <span className="text-slate-200 font-bold">0.25° GFS / IMD</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-outline uppercase text-[9px]">GEODATA SOURCE</span>
-              <span className="text-on-surface font-bold">NOAA GFS / IMD</span>
+              <span className="text-slate-400 uppercase text-[10px]">GEODATA SOURCE</span>
+              <span className="text-slate-200 font-bold">NOAA GFS / IMD</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-outline uppercase text-[9px]">MODEL ENGINE</span>
+              <span className="text-slate-400 uppercase text-[10px]">MODEL ENGINE</span>
               <span className="text-emerald-400 font-bold">LightGBM+Isotonic</span>
             </div>
           </div>

@@ -89,35 +89,31 @@ class DecisionSupportEngine:
                 description="Topographic vulnerability evidence: Ghats orography and maritime boundaries statistically exhibit higher residual variance due to sub-grid convective processes."
             ))
 
-        # Risk Level determination
-        if bust_probability >= 0.75:
+        # Risk Level & Operational Priority (Synchronized to Calibrated P(Bust) Meteorological Thresholds)
+        # Climatological base rate P0 = 0.04 (4.0%)
+        # < 8%    : Low Risk (< 2.0x base)          -> Priority: LOW
+        # 8–14%   : Moderate Risk (2.0 - 3.5x base) -> Priority: MONITOR
+        # 14–24%  : High Risk (3.5 - 6.0x base)     -> Priority: HIGH — REVIEW
+        # >= 24%  : Severe Risk (>= 6.0x base)      -> Priority: CRITICAL — INSPECTION REQUIRED
+        if bust_probability >= 0.24:
             risk_level = RiskLevel.SEVERE
-        elif bust_probability >= 0.50:
-            risk_level = RiskLevel.HIGH
-        elif bust_probability >= 0.28:
-            risk_level = RiskLevel.MODERATE
-        else:
-            risk_level = RiskLevel.LOW
-
-        # Operational Review Priority (Cost-Loss prioritized: missing a high-impact bust is costly)
-        cost_loss_multiplier = 1.25 if (is_coastal_or_ghats or forecast_value >= 50.0) else 1.0
-        effective_priority_score = bust_probability * cost_loss_multiplier
-
-        if effective_priority_score >= 0.75 or (bust_probability >= 0.60 and len(busted_analogues) >= 2):
             priority = OperationalPriority.CRITICAL_INSPECTION
             recommendation = (
                 "IMMEDIATE FORECASTER ATTENTION: Compare physical soundings and satellite water-vapor loops; "
                 "consider issuing ensemble-probabilistic cone instead of single-model deterministic threshold."
             )
-        elif effective_priority_score >= 0.45 or bust_probability >= 0.40:
+        elif bust_probability >= 0.14:
+            risk_level = RiskLevel.HIGH
             priority = OperationalPriority.HIGH_REVIEW
             recommendation = (
                 "RECOMMEND REVIEW: High uncertainty at current lead time. Cross-verify multi-model consensus and local Doppler radar trends."
             )
-        elif effective_priority_score >= 0.25:
+        elif bust_probability >= 0.08:
+            risk_level = RiskLevel.MODERATE
             priority = OperationalPriority.MONITOR
             recommendation = "MONITOR: Regular watch status. Maintain baseline verification on next 6-hourly cycle."
         else:
+            risk_level = RiskLevel.LOW
             priority = OperationalPriority.LOW
             recommendation = "ROUTINE: High model consensus and stable synoptic pattern. Standard operational guidance."
 

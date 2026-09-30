@@ -125,76 +125,86 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
           <span>{prediction.prototype_badge || "CALIBRATED ML MODEL (LightGBM + Isotonic)"}</span>
         </div>
 
-        {/* Core Risk & Confidence Metrics Grid */}
+        {/* Core Risk & Relative Elevation Metrics Grid */}
         <div className="grid grid-cols-3 gap-2">
           {/* 1. Calibrated Bust Risk */}
-          <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
-            <div className="text-[9px] uppercase tracking-wider text-slate-400">P(Bust Risk)</div>
-            <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-rose-400 font-bold font-mono text-base">
-                {Math.round(prediction.calibrated_probability_estimate * 100)}%
+          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+            <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Bust Probability</div>
+            <div className="my-1.5 flex items-baseline justify-between gap-1">
+              <span className={`text-[22px] font-bold font-mono leading-none ${
+                prediction.calibrated_probability_estimate >= 0.24 ? 'text-rose-400' :
+                prediction.calibrated_probability_estimate >= 0.14 ? 'text-orange-400' :
+                prediction.calibrated_probability_estimate >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
+              }`}>
+                {(prediction.calibrated_probability_estimate * 100).toFixed(1)}%
               </span>
-              <span className="text-[9px] text-slate-500 font-mono">
-                {Math.round(prediction.calibrated_probability_estimate * 100)}/100
+              <span className="text-[10px] text-slate-400 font-mono">
+                P(Bust)
               </span>
             </div>
-            <div className="mt-1.5 w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
               <div 
                 className={`h-full transition-all duration-500 ${
-                  prediction.calibrated_probability_estimate >= 0.70 ? 'bg-red-500' :
-                  prediction.calibrated_probability_estimate >= 0.45 ? 'bg-orange-500' :
-                  prediction.calibrated_probability_estimate >= 0.25 ? 'bg-amber-400' : 'bg-emerald-400'
+                  prediction.calibrated_probability_estimate >= 0.24 ? 'bg-red-500' :
+                  prediction.calibrated_probability_estimate >= 0.14 ? 'bg-orange-500' :
+                  prediction.calibrated_probability_estimate >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
                 }`}
-                style={{ width: `${Math.min(100, Math.max(2, prediction.calibrated_probability_estimate * 100))}%` }}
+                style={{ width: `${Math.min(100, Math.max(3, prediction.calibrated_probability_estimate * 100))}%` }}
               />
             </div>
           </div>
 
-          {/* 2. Calibrated Confidence */}
-          <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
-            <div className="text-[9px] uppercase tracking-wider text-slate-400">Confidence</div>
-            <div className="mt-1 flex items-baseline justify-between">
-              <span className="text-emerald-400 font-bold font-mono text-base">
-                {prediction.confidence_score_pct !== undefined 
-                  ? `${prediction.confidence_score_pct}%` 
-                  : `${Math.round((1 - prediction.calibrated_probability_estimate) * 100)}%`}
+          {/* 2. Risk Elevation vs Climatological Baseline (4.0%) */}
+          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+            <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Risk Elevation</div>
+            <div className="my-1.5 flex items-baseline justify-between gap-1">
+              <span className={`text-[22px] font-bold font-mono leading-none ${
+                prediction.calibrated_probability_estimate >= 0.24 ? 'text-rose-400' :
+                prediction.calibrated_probability_estimate >= 0.14 ? 'text-orange-400' :
+                prediction.calibrated_probability_estimate >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
+              }`}>
+                {(prediction.calibrated_probability_estimate / 0.04).toFixed(1)}×
               </span>
-              <span className="text-[9px] text-slate-500 font-mono">1 - P(Bust)</span>
+              <span className="text-[10px] text-slate-400 font-mono">vs 4% base</span>
             </div>
-            <div className="mt-1.5 w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-emerald-500 transition-all duration-500"
+                className={`h-full transition-all duration-500 ${
+                  prediction.calibrated_probability_estimate >= 0.24 ? 'bg-red-500' :
+                  prediction.calibrated_probability_estimate >= 0.14 ? 'bg-orange-500' :
+                  prediction.calibrated_probability_estimate >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
+                }`}
                 style={{ 
-                  width: `${prediction.confidence_score_pct !== undefined 
-                    ? prediction.confidence_score_pct 
-                    : (1 - prediction.calibrated_probability_estimate) * 100}%` 
+                  width: `${Math.min(100, Math.max(5, ((prediction.calibrated_probability_estimate / 0.04) / 7.0) * 100))}%` 
                 }}
               />
             </div>
           </div>
 
           {/* 3. Uncertainty Interval */}
-          <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
-            <div className="text-[9px] uppercase tracking-wider text-slate-400">Uncertainty</div>
-            <div className="mt-1 text-xs font-bold text-amber-300 font-mono">
-              {prediction.prototype_uncertainty_interval 
-                ? `${prediction.prototype_uncertainty_interval[0]}–${prediction.prototype_uncertainty_interval[1]}` 
-                : `${prediction.expected_error_range[0]}–${prediction.expected_error_range[1]}`}
-              <span className="text-[9px] text-slate-400 font-normal ml-0.5">mm</span>
+          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+            <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Uncertainty</div>
+            <div className="my-1.5 flex items-baseline gap-1">
+              <span className="text-[20px] font-bold text-amber-300 font-mono leading-none">
+                {prediction.prototype_uncertainty_interval 
+                  ? `${prediction.prototype_uncertainty_interval[0]}–${prediction.prototype_uncertainty_interval[1]}` 
+                  : `${prediction.expected_error_range[0]}–${prediction.expected_error_range[1]}`}
+              </span>
+              <span className="text-[11px] text-amber-200/80 font-mono">mm</span>
             </div>
-            <div className="text-[8px] text-slate-500 mt-1 font-mono truncate">
+            <div className="text-[10px] text-slate-400 font-mono truncate">
               Spread-Residual
             </div>
           </div>
         </div>
 
         {/* Action Recommendation */}
-        <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-800 text-xs">
-          <div className="text-[10px] uppercase font-bold text-sky-400 mb-1 flex items-center space-x-1">
+        <div className="p-3 rounded-lg bg-sky-950/20 border-l-4 border-l-sky-500 border-t border-r border-b border-sky-500/20 text-xs shadow-sm">
+          <div className="text-[11px] uppercase font-bold text-sky-400 mb-1 flex items-center space-x-1.5">
             <Info className="w-3.5 h-3.5" />
             <span>Operational Advisory</span>
           </div>
-          <p className="text-slate-300 leading-relaxed text-[11px]">
+          <p className="text-slate-200 leading-relaxed text-[11px]">
             {prediction.recommended_action}
           </p>
         </div>
@@ -207,7 +217,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
                 <Layers className="w-4 h-4" />
                 <h3 className="font-bold text-xs uppercase tracking-wider">Explainable AI (TreeSHAP Attributions)</h3>
               </div>
-              <span className="text-[9px] text-sky-300/80 font-mono">
+              <span className="text-[10px] text-sky-300 font-mono">
                 Model Drivers
               </span>
             </div>
@@ -217,8 +227,8 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
                 return (
                   <div key={idx} className="p-1.5 rounded bg-slate-900/80 border border-slate-800 text-[11px]">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-slate-200 text-[10px]">{attr.display_name}</span>
-                      <span className={`font-mono font-bold text-[10px] ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      <span className="font-medium text-slate-200 text-[11px]">{attr.display_name}</span>
+                      <span className={`font-mono font-bold text-[11px] ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
                         {isRiskIncrease ? `+${attr.attribution_value.toFixed(3)}` : attr.attribution_value.toFixed(3)}
                       </span>
                     </div>
@@ -236,7 +246,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
                           />
                         )}
                       </div>
-                      <span className="text-[8px] font-mono text-slate-500">
+                      <span className="text-[10px] font-mono text-slate-400">
                         {attr.direction === 'INCREASES_BUST_RISK' ? 'Increases Risk' : 'Reduces Risk'}
                       </span>
                     </div>
@@ -274,7 +284,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
                 <p className="text-[11px] text-slate-400 mt-1 leading-normal">
                   {driver.description}
                 </p>
-                <div className="mt-1 text-[10px] font-mono text-slate-500 flex items-center justify-between">
+                <div className="mt-1 text-[10px] font-mono text-slate-400 flex items-center justify-between">
                   <span>Metric: {driver.metric_value.toFixed(1)}</span>
                   <span>Threshold: {driver.benchmark_value.toFixed(1)}</span>
                 </div>
@@ -290,7 +300,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
               <TrendingUp className="w-4 h-4" />
               <h4 className="font-bold text-xs uppercase tracking-wider">Historical / Analogue Reference</h4>
             </div>
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono">
               PAST REFERENCE CASES (NOT CURRENT ML OUTPUT)
             </span>
           </div>
@@ -319,7 +329,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
                   <span className="font-semibold text-slate-200">{analogue.event_name}</span>
                   <div className="flex items-center space-x-1.5">
                     {analogue.bias_direction && (
-                      <span className={`text-[8px] font-mono px-1 rounded uppercase ${
+                      <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded uppercase ${
                         analogue.bias_direction === 'UNDERFORECAST' ? 'bg-purple-900/50 text-purple-300' :
                         analogue.bias_direction === 'OVERFORECAST' ? 'bg-blue-900/50 text-blue-300' : 'bg-slate-800 text-slate-400'
                       }`}>
@@ -354,7 +364,7 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
               Forecaster Review Action
             </span>
-            <span className="text-[9px] text-slate-500 font-mono">HITL Protocol</span>
+            <span className="text-[10px] text-slate-400 font-mono">HITL Protocol</span>
           </div>
 
           {submittedMessage && (

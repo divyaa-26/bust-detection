@@ -376,20 +376,35 @@ def get_region_lead_matrix(
             
             multi_metrics = MultiModelAgreementEngine.compute_agreement([gfs_grid, aifs_grid], reg_id)
             
+            # Historical analogues feature extraction to match get_risk_map exactly
+            as_of_date = forecast_run.split("T")[0] if forecast_run else None
+            analogues = HistoricalAnalogueEngine.find_top_analogues(
+                target_region_id=reg_id,
+                lead_time_days=lead,
+                forecast_value=gfs_grid.subdivision_values.get(reg_id, 0.0),
+                ensemble_spread=gfs_grid.ensemble_spread.get(reg_id, 4.0),
+                model_disagreement=multi_metrics.inter_model_difference,
+                as_of_date=as_of_date,
+                top_k=3
+            )
+            analogue_stats = HistoricalAnalogueEngine.compute_analogue_error_statistics(analogues)
+            
             feats = FeatureEngineeringEngine.extract_features(
                 primary_grid=gfs_grid,
                 secondary_grid=aifs_grid,
                 region_id=reg_id,
-                lead_time_days=lead
+                lead_time_days=lead,
+                analogue_historical_bust_rate=analogue_stats.historical_bust_rate,
+                analogue_mean_error=analogue_stats.mean_observed_error_mm
             )
             feats.is_ghats_or_coastal = is_ghats_or_coastal
             
             raw_pred = trained_model.predict(feats) if trained_model.is_loaded else demo_model.predict(feats)
             
             risk_level = (
-                RiskLevel.CRITICAL if raw_pred.calibrated_probability >= 0.70 else
-                RiskLevel.HIGH if raw_pred.calibrated_probability >= 0.45 else
-                RiskLevel.MODERATE if raw_pred.calibrated_probability >= 0.25 else
+                RiskLevel.SEVERE if raw_pred.calibrated_probability >= 0.24 else
+                RiskLevel.HIGH if raw_pred.calibrated_probability >= 0.14 else
+                RiskLevel.MODERATE if raw_pred.calibrated_probability >= 0.08 else
                 RiskLevel.LOW
             )
             
@@ -421,7 +436,7 @@ def get_region_lead_matrix(
         
     return {
         "initialization_time": forecast_run,
-        "variable": variable.value,
+        "variable": variable.value if hasattr(variable, "value") else str(variable),
         "lead_days": lead_days,
         "regions_count": len(subdivisions),
         "lead_summary": lead_summary,

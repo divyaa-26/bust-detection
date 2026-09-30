@@ -21,7 +21,7 @@ export default {
           success: '#10B981',
           bust: '#DC2626'
         },
-        // Contributor Avi AETHER-DISPUTE tokens
+        // Contributor Avi AETHER-CAST tokens
         "surface-container-high": "#262a33",
         "on-tertiary-fixed": "#410004",
         "on-surface": "#dfe2ee",
