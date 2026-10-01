@@ -1,4 +1,4 @@
-# SIH 2026 Live Demo Script & Walkthrough Guide
+# AETHER-CAST: SIH 2026 Live Demo Script & Walkthrough Guide
 ## SIH26079 — Forecast Reliability Intelligence & Decision-Support System
 
 > **SCIENTIFIC CREDIBILITY NOTICE**:

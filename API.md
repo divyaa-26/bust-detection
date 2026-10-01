@@ -1,4 +1,4 @@
-# RESTful & OGC-Style API Reference — SIH26079
+# AETHER-CAST RESTful & OGC-Style API Reference — SIH26079
 
 Interactive OpenAPI documentation is available live at `http://localhost:8000/docs`.
 

@@ -1,4 +1,4 @@
-# SIH26079 — Forecast Reliability Intelligence & Decision-Support System (Bust Detection)
+# AETHER-CAST (SIH26079) — Forecast Reliability Intelligence & Decision-Support System (Bust Detection)
 
 > **AI-Based Forecast Bust Detection for Medium-Range Weather Forecasts**  
 > *Sponsor: Ministry of Earth Sciences (MoES), Government of India*  
@@ -17,7 +17,7 @@
 
 Numerical Weather Prediction (NWP) systems—such as NCMRWF's NCUM, NOAA's GFS, and ECMWF IFS / AIFS—are the backbone of modern meteorology. **Our goal is NOT to replace Numerical Weather Prediction.**
 
-Instead, we have engineered an operational **Forecast Reliability Intelligence & Decision-Support Layer** that sits directly above existing forecast systems to answer:
+Instead, **AETHER-CAST** has engineered an operational **Forecast Reliability Intelligence & Decision-Support Layer** that sits directly above existing forecast systems to answer:
 
 1. **WHERE is the forecast likely to fail?** (Spatially explicit across India's 36 IMD subdivisions)
 2. **WHEN is it likely to fail?** (Medium-range forecast horizon D+1 through D+10)

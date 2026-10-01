@@ -1,4 +1,4 @@
-# System Architecture — SIH26079
+# System Architecture — AETHER-CAST (SIH26079)
 
 ## 1. Architectural Philosophy: Model-Agnostic Decision Support
 
