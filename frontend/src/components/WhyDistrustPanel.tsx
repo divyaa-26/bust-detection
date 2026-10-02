@@ -10,7 +10,9 @@ import {
   X, 
   FileCheck,
   ChevronRight,
-  Info
+  Info,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
 import { PredictionDetail, OperationalPriority } from '../types';
 import { api } from '../services/api';
@@ -19,6 +21,83 @@ interface WhyDistrustPanelProps {
   prediction: PredictionDetail | null;
   onFeedbackSubmitted?: () => void;
 }
+
+interface FeatureDisplayMetadata {
+  name: string;
+  formattedValue: string;
+  description: string;
+}
+
+const getFeatureDisplay = (featureName: string, val: number): FeatureDisplayMetadata => {
+  switch (featureName) {
+    case 'lead_time_days':
+      return {
+        name: 'Forecast Lead Horizon',
+        formattedValue: `D+${Math.round(val)} (${Math.round(val)} days)`,
+        description: 'Forecast degradation with increasing lead horizon'
+      };
+    case 'forecast_value_mm':
+      return {
+        name: 'Forecast Rainfall Magnitude',
+        formattedValue: `${val.toFixed(1)} mm/day`,
+        description: 'Predicted 24h precipitation magnitude'
+      };
+    case 'climatological_normal_mm':
+      return {
+        name: 'Climatological Normal Baseline',
+        formattedValue: `${val.toFixed(1)} mm/day`,
+        description: 'Historical subdivision baseline precipitation reference'
+      };
+    case 'forecast_anomaly_mm':
+      return {
+        name: 'Forecast Synoptic Anomaly',
+        formattedValue: `${val >= 0 ? '+' : ''}${val.toFixed(1)} mm/day`,
+        description: 'Synoptic departure of forecast from climatological baseline'
+      };
+    case 'subdivision_code':
+      return {
+        name: 'Subdivision Geographic Index',
+        formattedValue: `Subdivision #${Math.round(val)}`,
+        description: 'Geographic identity among 36 IMD subdivisions'
+      };
+    case 'macro_region_code':
+      return {
+        name: 'Macro-Region Synoptic Regime',
+        formattedValue: `Regime #${Math.round(val)}`,
+        description: 'Regional synoptic climatology regime'
+      };
+    case 'terrain_type_code':
+      return {
+        name: 'Topographical Regime',
+        formattedValue: `Terrain #${Math.round(val)}`,
+        description: 'Topographic interaction category (Plains, Ghats, Plateau, Arid, Hills)'
+      };
+    case 'is_coastal':
+      return {
+        name: 'Maritime Coastal Boundary',
+        formattedValue: val === 1 ? 'Coastal / Maritime (Yes)' : 'Inland (No)',
+        description: 'Marine moisture boundary layer interaction flag'
+      };
+    case 'analogue_historical_bust_rate':
+      return {
+        name: 'Historical Analogue Bust Rate',
+        formattedValue: `${(val * 100).toFixed(1)}%`,
+        description: 'Empirical bust rate under similar past atmospheric regimes'
+      };
+    case 'analogue_mean_error_mm':
+      return {
+        name: 'Analogue Mean Verification Error',
+        formattedValue: `${val.toFixed(1)} mm`,
+        description: 'Historical mean absolute error in similar synoptic analogues'
+      };
+    default:
+      return {
+        name: featureName.replace(/_/g, ' '),
+        formattedValue: `${val}`,
+        description: 'Model input parameter'
+      };
+  }
+};
 
 export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
   prediction,
@@ -128,153 +207,226 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
           <span>{prediction.prototype_badge || "CALIBRATED ML MODEL (LightGBM + Isotonic)"}</span>
         </div>
 
-        {/* Core Risk & Relative Elevation Metrics Grid */}
-        <div className="grid grid-cols-3 gap-2">
-          {/* 1. Calibrated Bust Risk */}
-          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
-            <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Bust Probability</div>
-            <div className="my-1.5 flex items-baseline justify-between gap-1">
-              <span className={`text-[22px] font-bold font-mono leading-none ${
-                prediction.calibrated_probability_estimate >= 0.24 ? 'text-rose-400' :
-                prediction.calibrated_probability_estimate >= 0.14 ? 'text-orange-400' :
-                prediction.calibrated_probability_estimate >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
-              }`}>
-                {(prediction.calibrated_probability_estimate * 100).toFixed(1)}%
-              </span>
-              <span className="text-[10px] text-slate-400 font-mono">
-                P(Bust)
-              </span>
+        {/* ======================================================== */}
+        {/* STEP 1: RISK STATUS                                      */}
+        {/* ======================================================== */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between pb-1">
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-300 uppercase tracking-wider">
+              <span className="w-5 h-5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/40 text-[10px] flex items-center justify-center font-mono font-bold">1</span>
+              <span>RISK STATUS</span>
             </div>
-            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div 
-                className={`h-full transition-all duration-500 ${
-                  prediction.calibrated_probability_estimate >= 0.24 ? 'bg-red-500' :
-                  prediction.calibrated_probability_estimate >= 0.14 ? 'bg-orange-500' :
-                  prediction.calibrated_probability_estimate >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
-                }`}
-                style={{ width: `${Math.min(100, Math.max(3, prediction.calibrated_probability_estimate * 100))}%` }}
-              />
-            </div>
+            <span className="text-[10px] font-mono text-slate-400">
+              Calibrated LightGBM Evaluation
+            </span>
           </div>
 
-          {/* 2. Risk Elevation vs Climatological Baseline (4.0%) */}
-          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
-            <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Risk Elevation</div>
-            <div className="my-1.5 flex items-baseline justify-between gap-1">
-              <span className={`text-[22px] font-bold font-mono leading-none ${
-                prediction.calibrated_probability_estimate >= 0.24 ? 'text-rose-400' :
-                prediction.calibrated_probability_estimate >= 0.14 ? 'text-orange-400' :
-                prediction.calibrated_probability_estimate >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
-              }`}>
-                {(prediction.calibrated_probability_estimate / 0.04).toFixed(1)}×
-              </span>
-              <span className="text-[10px] text-slate-400 font-mono">vs 4% base</span>
-            </div>
-            <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-              <div 
-                className={`h-full transition-all duration-500 ${
-                  prediction.calibrated_probability_estimate >= 0.24 ? 'bg-red-500' :
-                  prediction.calibrated_probability_estimate >= 0.14 ? 'bg-orange-500' :
-                  prediction.calibrated_probability_estimate >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
-                }`}
-                style={{ 
-                  width: `${Math.min(100, Math.max(5, ((prediction.calibrated_probability_estimate / 0.04) / 7.0) * 100))}%` 
-                }}
-              />
-            </div>
-          </div>
-
-          {/* 3. Uncertainty Interval */}
-          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
-            <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Uncertainty</div>
-            <div className="my-1.5 flex items-baseline gap-1">
-              <span className="text-[20px] font-bold text-amber-300 font-mono leading-none">
-                {prediction.prototype_uncertainty_interval 
-                  ? `${prediction.prototype_uncertainty_interval[0]}–${prediction.prototype_uncertainty_interval[1]}` 
-                  : `${prediction.expected_error_range[0]}–${prediction.expected_error_range[1]}`}
-              </span>
-              <span className="text-[11px] text-amber-200/80 font-mono">mm</span>
-            </div>
-            <div className="text-[10px] text-slate-400 font-mono truncate">
-              Spread-Residual
-            </div>
-          </div>
-        </div>
-
-        {/* Action Recommendation */}
-        <div className="p-3 rounded-lg bg-sky-950/20 border-l-4 border-l-sky-500 border-t border-r border-b border-sky-500/20 text-xs shadow-sm">
-          <div className="text-[11px] uppercase font-bold text-sky-400 mb-1 flex items-center space-x-1.5">
-            <Info className="w-3.5 h-3.5" />
-            <span>Operational Advisory</span>
-          </div>
-          <p className="text-slate-200 leading-relaxed text-[11px]">
-            {prediction.recommended_action}
-          </p>
-        </div>
-
-        {/* EXPLAINABLE AI: TreeSHAP Feature Attributions */}
-        {prediction.shap_attributions && prediction.shap_attributions.length > 0 && (
-          <div className="p-3.5 rounded-lg bg-sky-950/20 border border-sky-500/30">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-sky-500/20">
-              <div className="flex items-center space-x-2 text-sky-400">
-                <Layers className="w-4 h-4" />
-                <h3 className="font-bold text-xs uppercase tracking-wider">WHY WAS THIS FLAGGED?</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {/* 1. Calibrated Bust Risk */}
+            <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+              <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Bust Probability</div>
+              <div className="my-1.5 flex items-baseline justify-between gap-1">
+                <span className={`text-[22px] font-bold font-mono leading-none ${
+                  prediction.calibrated_probability_estimate >= 0.24 ? 'text-rose-400' :
+                  prediction.calibrated_probability_estimate >= 0.14 ? 'text-orange-400' :
+                  prediction.calibrated_probability_estimate >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
+                }`}>
+                  {(prediction.calibrated_probability_estimate * 100).toFixed(1)}%
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  P(Bust)
+                </span>
               </div>
-              <span className="text-[10px] text-sky-300 font-mono">
-                Top 3 TreeSHAP Contributors
-              </span>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-500 ${
+                    prediction.calibrated_probability_estimate >= 0.24 ? 'bg-red-500' :
+                    prediction.calibrated_probability_estimate >= 0.14 ? 'bg-orange-500' :
+                    prediction.calibrated_probability_estimate >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
+                  }`}
+                  style={{ width: `${Math.min(100, Math.max(3, prediction.calibrated_probability_estimate * 100))}%` }}
+                />
+              </div>
             </div>
-            <div className="text-[11px] text-slate-400 mb-2 leading-relaxed font-sans">
-              What is the model seeing? Top feature drivers contributing directly to calibrated bust risk:
+
+            {/* 2. Risk Elevation vs Climatological Baseline (4.0%) */}
+            <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+              <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Risk Elevation</div>
+              <div className="my-1.5 flex items-baseline justify-between gap-1">
+                <span className={`text-[22px] font-bold font-mono leading-none ${
+                  prediction.calibrated_probability_estimate >= 0.24 ? 'text-rose-400' :
+                  prediction.calibrated_probability_estimate >= 0.14 ? 'text-orange-400' :
+                  prediction.calibrated_probability_estimate >= 0.08 ? 'text-amber-400' : 'text-emerald-400'
+                }`}>
+                  {(prediction.calibrated_probability_estimate / 0.04).toFixed(1)}×
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">vs 4% base</span>
+              </div>
+              <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-500 ${
+                    prediction.calibrated_probability_estimate >= 0.24 ? 'bg-red-500' :
+                    prediction.calibrated_probability_estimate >= 0.14 ? 'bg-orange-500' :
+                    prediction.calibrated_probability_estimate >= 0.08 ? 'bg-amber-400' : 'bg-emerald-400'
+                  }`}
+                  style={{ 
+                    width: `${Math.min(100, Math.max(5, ((prediction.calibrated_probability_estimate / 0.04) / 7.0) * 100))}%` 
+                  }}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              {prediction.shap_attributions.slice(0, 3).map((attr, idx) => {
-                const isRiskIncrease = attr.attribution_value > 0;
-                return (
-                  <div key={idx} className="p-2 rounded bg-slate-900/90 border border-slate-800 text-[11px]">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1.5 min-w-0">
-                        <span className="w-4 h-4 rounded bg-slate-800 text-sky-400 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
-                          #{idx + 1}
-                        </span>
-                        <span className="font-semibold text-slate-200 text-[11px] truncate">
-                          {attr.display_name}
-                        </span>
-                      </div>
-                      <span className={`font-mono font-bold text-xs shrink-0 ml-2 ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
-                        {isRiskIncrease ? `+${attr.attribution_value.toFixed(4)}` : attr.attribution_value.toFixed(4)}
-                      </span>
-                    </div>
 
-                    <div className="mt-1.5 flex items-center space-x-2">
-                      <div className="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden flex">
-                        {isRiskIncrease ? (
-                          <div 
-                            className="bg-rose-500 h-full rounded-full transition-all"
-                            style={{ width: `${Math.min(100, Math.max(8, attr.abs_magnitude * 120))}%` }}
-                          />
-                        ) : (
-                          <div 
-                            className="bg-emerald-500 h-full rounded-full transition-all"
-                            style={{ width: `${Math.min(100, Math.max(8, attr.abs_magnitude * 120))}%` }}
-                          />
-                        )}
-                      </div>
-                      <span className={`text-[10px] font-mono shrink-0 ${isRiskIncrease ? 'text-rose-300' : 'text-emerald-300'}`}>
-                        {attr.direction === 'INCREASES_BUST_RISK' ? 'Increases Bust Risk' : 'Reduces Bust Risk'}
-                      </span>
-                    </div>
-
-                    <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                      <span>Feature Input: <strong className="text-slate-300">{attr.feature_input_value}</strong></span>
-                      <span>Magnitude: <strong className="text-slate-300">{attr.abs_magnitude.toFixed(4)}</strong></span>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* 3. Uncertainty Interval */}
+            <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+              <div className="text-[11px] font-semibold text-slate-300 tracking-tight">Uncertainty</div>
+              <div className="my-1.5 flex items-baseline gap-1">
+                <span className="text-[20px] font-bold text-amber-300 font-mono leading-none">
+                  {prediction.prototype_uncertainty_interval 
+                    ? `${prediction.prototype_uncertainty_interval[0]}–${prediction.prototype_uncertainty_interval[1]}` 
+                    : `${prediction.expected_error_range[0]}–${prediction.expected_error_range[1]}`}
+                </span>
+                <span className="text-[11px] text-amber-200/80 font-mono">mm</span>
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono truncate">
+                Spread-Residual
+              </div>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* ======================================================== */}
+        {/* STEP 2: WHY? (TreeSHAP Explainability)                   */}
+        {/* ======================================================== */}
+        {prediction.shap_attributions && prediction.shap_attributions.length > 0 && (() => {
+          const top3Contributors = prediction.shap_attributions.slice(0, 3);
+          const maxMag = Math.max(...top3Contributors.map((a) => a.abs_magnitude), 0.0001);
+
+          return (
+            <div className="p-3.5 rounded-lg bg-sky-950/20 border border-sky-500/30 space-y-2.5">
+              <div className="flex items-center justify-between pb-2 border-b border-sky-500/20">
+                <div className="flex items-center space-x-2 text-sky-400">
+                  <span className="w-5 h-5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/40 text-[10px] flex items-center justify-center font-mono font-bold">2</span>
+                  <Layers className="w-4 h-4" />
+                  <h3 className="font-bold text-xs uppercase tracking-wider">WHY WAS THIS FLAGGED?</h3>
+                </div>
+                <span className="text-[10px] text-sky-300 font-mono bg-sky-900/40 px-2 py-0.5 rounded border border-sky-500/30">
+                  TOP 3 TREESHAP CONTRIBUTORS
+                </span>
+              </div>
+
+              <div className="text-[11px] text-slate-300 leading-relaxed font-sans">
+                Decomposition of the LightGBM model prediction: top atmospheric, lead-time, and regional factors driving bust probability deviation:
+              </div>
+
+              <div className="space-y-2.5">
+                {top3Contributors.map((attr, idx) => {
+                  const isRiskIncrease = attr.attribution_value > 0;
+                  const featInfo = getFeatureDisplay(attr.feature_name, attr.feature_input_value);
+                  const relPct = Math.round((attr.abs_magnitude / maxMag) * 100);
+
+                  return (
+                    <div 
+                      key={attr.feature_name || idx} 
+                      className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition"
+                    >
+                      {/* Contributor Header */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start space-x-2 min-w-0">
+                          <span className="w-4 h-4 rounded bg-slate-800 text-sky-400 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-slate-700">
+                            #{idx + 1}
+                          </span>
+                          <div>
+                            <div className="font-semibold text-slate-100 text-xs leading-snug">
+                              {featInfo.name}
+                            </div>
+                            <div className="text-[10px] text-slate-500 font-mono">
+                              {attr.feature_name}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <span className={`font-mono font-bold text-xs ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
+                            {isRiskIncrease ? `+${attr.attribution_value.toFixed(4)}` : attr.attribution_value.toFixed(4)}
+                          </span>
+                          <div className="text-[9px] text-slate-500 font-mono">SHAP score</div>
+                        </div>
+                      </div>
+
+                      {/* Actual Feature Input Value */}
+                      <div className="mt-2 p-1.5 rounded bg-slate-950/70 border border-slate-800/80 flex items-center justify-between text-[11px]">
+                        <span className="text-slate-400 text-[10px] font-sans">Actual Feature Value:</span>
+                        <span className="font-mono font-bold text-slate-200">
+                          {featInfo.formattedValue}
+                        </span>
+                      </div>
+
+                      {/* Direction and Relative Magnitude Bar */}
+                      <div className="mt-2 space-y-1">
+                        <div className="flex items-center justify-between text-[10px]">
+                          <span className="text-slate-400 font-sans">Attribution Impact:</span>
+                          <span className={`font-mono font-bold px-1.5 py-0.5 rounded text-[9px] tracking-wide border flex items-center space-x-0.5 ${
+                            isRiskIncrease
+                              ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                              : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          }`}>
+                            {isRiskIncrease ? (
+                              <ArrowUpRight className="w-3 h-3 text-rose-400" />
+                            ) : (
+                              <ArrowDownRight className="w-3 h-3 text-emerald-400" />
+                            )}
+                            <span>{isRiskIncrease ? 'INCREASES BUST RISK' : 'REDUCES BUST RISK'}</span>
+                          </span>
+                        </div>
+
+                        {/* Relative Magnitude Bar */}
+                        <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden flex" title={`Relative attribution magnitude: ${relPct}%`}>
+                          <div 
+                            className={`h-full rounded-full transition-all duration-300 ${
+                              isRiskIncrease ? 'bg-rose-500' : 'bg-emerald-500'
+                            }`}
+                            style={{ width: `${Math.min(100, Math.max(8, relPct))}%` }}
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between text-[9px] text-slate-500 font-mono pt-0.5">
+                          <span>{featInfo.description}</span>
+                          <span>rel: {relPct}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ======================================================== */}
+        {/* STEP 3: WHAT SHOULD I REVIEW?                            */}
+        {/* ======================================================== */}
+        <div className="space-y-3 pt-1">
+          <div className="flex items-center justify-between pb-1">
+            <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-300 uppercase tracking-wider">
+              <span className="w-5 h-5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/40 text-[10px] flex items-center justify-center font-mono font-bold">3</span>
+              <span>WHAT SHOULD I REVIEW?</span>
+            </div>
+            <span className="text-[10px] font-mono text-slate-400">
+              Operational Advisory & Diagnostics
+            </span>
+          </div>
+
+          {/* Action Recommendation */}
+          <div className="p-3 rounded-lg bg-sky-950/20 border-l-4 border-l-sky-500 border-t border-r border-b border-sky-500/20 text-xs shadow-sm">
+            <div className="text-[11px] uppercase font-bold text-sky-400 mb-1 flex items-center space-x-1.5">
+              <Info className="w-3.5 h-3.5" />
+              <span>Operational Advisory</span>
+            </div>
+            <p className="text-slate-200 leading-relaxed text-[11px]">
+              {prediction.recommended_action}
+            </p>
+          </div>
+        </div>
 
         {/* WHY DISTRUST THIS FORECAST? Physical Drivers */}
         <div className="p-3.5 rounded-lg bg-red-950/20 border border-red-500/30">
