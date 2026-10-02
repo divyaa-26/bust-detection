@@ -76,3 +76,51 @@ def test_synthetic_fallback_labeled_distinctly():
     )
     res = synthetic_model.predict(feats)
     assert res.prototype_badge in ["DEMO RULE-BASED HEURISTIC", "SYNTHETIC PROTOTYPE MODEL"]
+
+def test_all_36_subdivisions_train_serve_encoding_parity():
+    """Verify that all 36 subdivisions use the exact same encodings as training."""
+    from app.ml.trained_model import SUBDIVISION_CANONICAL_ENCODINGS, FEATURE_COLS_REAL
+    import pandas as pd
+    from data.training.train_real_model import encode_features
+    
+    # 1. Verify coverage of all 36 subdivisions
+    assert len(SUBDIVISION_CANONICAL_ENCODINGS) == 36
+    for i in range(1, 37):
+        sid = f"SUB_{i:02d}"
+        assert sid in SUBDIVISION_CANONICAL_ENCODINGS, f"Missing {sid} in canonical encodings"
+        enc = SUBDIVISION_CANONICAL_ENCODINGS[sid]
+        assert enc["subdivision_code"] == i
+        assert enc["macro_region_code"] in [1, 2, 3, 4, 5]
+        assert enc["terrain_type_code"] in [1, 2, 3, 4, 5]
+        assert enc["is_coastal"] in [0, 1]
+
+    # 2. Verify exact parity against training dataset encoding
+    df_train = pd.read_csv("backend/data/training/expanded_real_nwp_dataset.csv")
+    df_enc = encode_features(df_train).drop_duplicates("region_id").sort_values("subdivision_code")
+    for _, row in df_enc.iterrows():
+        sid = row["region_id"]
+        canonical = SUBDIVISION_CANONICAL_ENCODINGS[sid]
+        assert canonical["subdivision_code"] == int(row["subdivision_code"]), f"Mismatch subdivision_code for {sid}"
+        assert canonical["macro_region_code"] == int(row["macro_region_code"]), f"Mismatch macro_region_code for {sid}"
+        assert canonical["terrain_type_code"] == int(row["terrain_type_code"]), f"Mismatch terrain_type_code for {sid}"
+        assert canonical["is_coastal"] == int(row["is_coastal"]), f"Mismatch is_coastal for {sid}"
+
+    # 3. Verify predict() runs cleanly on all 36 subdivisions
+    model = TrainedReliabilityModel()
+    for i in range(1, 37):
+        sid = f"SUB_{i:02d}"
+        feats = ModelFeatures(
+            region_id=sid,
+            lead_time_days=5,
+            forecast_value=25.0,
+            ensemble_spread=10.0,
+            inter_model_difference=8.0,
+            climatological_mean=10.0,
+            spatial_gradient=5.0,
+            is_ghats_or_coastal=bool(SUBDIVISION_CANONICAL_ENCODINGS[sid]["is_coastal"])
+        )
+        out = model.predict(feats)
+        assert 0.0 <= out.calibrated_probability <= 1.0
+        assert out.prototype_badge == "REAL GFS + IMD TRAINED MODEL"
+        assert len(out.shap_attributions) == 10
+

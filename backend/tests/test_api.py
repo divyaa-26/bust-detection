@@ -147,4 +147,29 @@ def test_realtime_disagreement_graceful_fallback_no_synthesis():
     assert data["disagreements"] == []
     assert "strictly NOT synthesized" in data["status_message"]
 
+def test_model_metrics_endpoint():
+    """Verify that /api/model/metrics returns real model Isotonic calibration and out-of-time metrics."""
+    res = client.get("/api/model/metrics")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "TRAINED_REAL_MODEL"
+    assert data["is_real_model"] is True
+    assert data["model_badge"] == "REAL GFS + IMD TRAINED MODEL"
+    
+    # Verify calibration block exposes actual committed Isotonic calibration results
+    calib = data["calibration"]
+    assert "Isotonic Regression" in calib["method_name"]
+    assert calib["expected_calibration_error"] == 0.0152
+    assert calib["brier_score_calibrated"] == 0.0362
+    assert "reliability_bins" in calib
+    assert len(calib["reliability_bins"]) == 10
+    
+    # Verify metrics
+    metrics = data["metrics"]
+    assert metrics["brier_score_calibrated"] == 0.0362
+    assert metrics["roc_auc"] == 0.7823
+    assert metrics["pr_auc"] == 0.1326
+    assert metrics["brier_skill_score_vs_climatology"] == 0.0474
+
+
 

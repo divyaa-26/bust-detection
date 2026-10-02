@@ -64,6 +64,47 @@ TERRAIN_MAP = {
     "island": 5
 }
 
+# Canonical feature encodings generated strictly by train_real_model.py encode_features()
+# Guarantees 100% train/serve parity across all 36 IMD subdivisions
+SUBDIVISION_CANONICAL_ENCODINGS: Dict[str, Dict[str, int]] = {
+    "SUB_01": {"subdivision_code": 1, "macro_region_code": 1, "terrain_type_code": 5, "is_coastal": 0},
+    "SUB_02": {"subdivision_code": 2, "macro_region_code": 2, "terrain_type_code": 4, "is_coastal": 0},
+    "SUB_03": {"subdivision_code": 3, "macro_region_code": 2, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_04": {"subdivision_code": 4, "macro_region_code": 2, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_05": {"subdivision_code": 5, "macro_region_code": 2, "terrain_type_code": 4, "is_coastal": 0},
+    "SUB_06": {"subdivision_code": 6, "macro_region_code": 2, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_07": {"subdivision_code": 7, "macro_region_code": 2, "terrain_type_code": 1, "is_coastal": 1},
+    "SUB_08": {"subdivision_code": 8, "macro_region_code": 2, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_09": {"subdivision_code": 9, "macro_region_code": 2, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_10": {"subdivision_code": 10, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_11": {"subdivision_code": 11, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_12": {"subdivision_code": 12, "macro_region_code": 1, "terrain_type_code": 4, "is_coastal": 0},
+    "SUB_13": {"subdivision_code": 13, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_14": {"subdivision_code": 14, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_15": {"subdivision_code": 15, "macro_region_code": 1, "terrain_type_code": 4, "is_coastal": 0},
+    "SUB_16": {"subdivision_code": 16, "macro_region_code": 1, "terrain_type_code": 4, "is_coastal": 0},
+    "SUB_17": {"subdivision_code": 17, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_18": {"subdivision_code": 18, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_19": {"subdivision_code": 19, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_20": {"subdivision_code": 20, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_21": {"subdivision_code": 21, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_22": {"subdivision_code": 22, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 1},
+    "SUB_23": {"subdivision_code": 23, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 1},
+    "SUB_24": {"subdivision_code": 24, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_25": {"subdivision_code": 25, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_26": {"subdivision_code": 26, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_27": {"subdivision_code": 27, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_28": {"subdivision_code": 28, "macro_region_code": 1, "terrain_type_code": 2, "is_coastal": 1},
+    "SUB_29": {"subdivision_code": 29, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_30": {"subdivision_code": 30, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_31": {"subdivision_code": 31, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 1},
+    "SUB_32": {"subdivision_code": 32, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 1},
+    "SUB_33": {"subdivision_code": 33, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_34": {"subdivision_code": 34, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 0},
+    "SUB_35": {"subdivision_code": 35, "macro_region_code": 1, "terrain_type_code": 1, "is_coastal": 1},
+    "SUB_36": {"subdivision_code": 36, "macro_region_code": 1, "terrain_type_code": 5, "is_coastal": 0},
+}
+
 class TrainedReliabilityModel(BaseReliabilityModel):
     """
     Production-grade trained LightGBM Classifier with Isotonic Probability Calibration
@@ -164,25 +205,20 @@ class TrainedReliabilityModel(BaseReliabilityModel):
         # BRANCH A: Real NWP + IMD Trained Model Inference
         # -------------------------------------------------------------
         if self.is_real_model:
-            # Parse subdivision index: e.g. SUB_22 -> 22
-            try:
-                sub_code = int(features.region_id.split("_")[1]) if "_" in features.region_id else 1
-            except Exception:
-                sub_code = 1
-                
-            macro_code = 3 # Central India default
-            if sub_code in [28, 29, 30, 31, 32, 33, 34, 35, 36]:
-                macro_code = 1 # South Peninsula
-            elif sub_code in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
-                macro_code = 2 # East & Northeast
-            elif sub_code in [10, 11, 12, 13, 14, 15, 16, 17, 18]:
-                macro_code = 4 # Northwest
-                
-            terrain_code = 2 if features.is_ghats_or_coastal else 1
-            if sub_code in [2, 12, 15, 16]:
-                terrain_code = 4 # Himalayan
-            elif sub_code in [23, 32, 35]:
-                terrain_code = 3 # Ghats
+            enc = SUBDIVISION_CANONICAL_ENCODINGS.get(features.region_id)
+            if enc:
+                sub_code = enc["subdivision_code"]
+                macro_code = enc["macro_region_code"]
+                terrain_code = enc["terrain_type_code"]
+                is_coastal = enc["is_coastal"]
+            else:
+                try:
+                    sub_code = int(features.region_id.split("_")[1]) if "_" in features.region_id else 1
+                except Exception:
+                    sub_code = 1
+                macro_code = 1
+                terrain_code = 1
+                is_coastal = 1 if features.is_ghats_or_coastal else 0
                 
             row = {
                 "lead_time_days": int(features.lead_time_days),
@@ -192,7 +228,7 @@ class TrainedReliabilityModel(BaseReliabilityModel):
                 "subdivision_code": int(sub_code),
                 "macro_region_code": int(macro_code),
                 "terrain_type_code": int(terrain_code),
-                "is_coastal": 1 if features.is_ghats_or_coastal else 0,
+                "is_coastal": int(is_coastal),
                 "analogue_historical_bust_rate": float(features.analogue_historical_bust_rate),
                 "analogue_mean_error_mm": float(features.analogue_mean_error)
             }

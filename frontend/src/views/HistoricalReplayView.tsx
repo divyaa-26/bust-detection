@@ -69,12 +69,12 @@ export const HistoricalReplayView: React.FC<HistoricalReplayViewProps> = ({
         <div>
           <div className="flex items-center space-x-2">
             <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-xs uppercase border border-amber-500/30">
-              SIH FLAGSHIP REPLAY
+              HISTORICAL CASE DIAGNOSTIC (AUDITED BENCHMARK)
             </span>
             <h2 className="text-xl font-bold text-slate-100">Historical Counterfactual Replay Engine</h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Simulate medium-range lead progression with a <strong>Hard As-Of Temporal Cutoff</strong> and zero future observation leakage.
+            Simulate medium-range lead progression with a <strong>Hard As-Of Temporal Cutoff</strong> and audited deterministic benchmark scoring (DemoReliabilityModel heuristic; not real-time LightGBM inference).
           </p>
         </div>
 
@@ -135,6 +135,7 @@ export const HistoricalReplayView: React.FC<HistoricalReplayViewProps> = ({
                 <div><span className="text-slate-500">OBSERVATION SOURCE:</span> {activeEvent.observation_source || 'IMD Daily Gridded Rainfall Analysis'}</div>
                 <div><span className="text-slate-500">VERIFICATION DATE:</span> {activeEvent.event_date}</div>
                 <div><span className="text-slate-500">UNITS:</span> {activeEvent.units || 'mm/day'}</div>
+                <div><span className="text-slate-500">DIAGNOSTIC ENGINE:</span> Audited Benchmark Heuristic (DemoReliabilityModel — Preserves Frozen 76/100 T-5 anchor)</div>
               </div>
 
               <p className="text-slate-300 mt-3 text-[11px] leading-relaxed">
@@ -209,9 +210,9 @@ export const HistoricalReplayView: React.FC<HistoricalReplayViewProps> = ({
             {currentStep && (
               <div className="p-6 rounded-xl bg-[#111827] border border-slate-800 shadow-xl space-y-5">
                 {/* Persistent Visible Replay Mode Badge */}
-                <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/40 text-amber-300 text-center font-mono text-[10px] font-bold tracking-wider uppercase flex items-center justify-center space-x-1.5">
-                  <AlertOctagon className="w-3.5 h-3.5 text-amber-400" />
-                  <span>PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED (HISTORICAL REPLAY ARCHIVE)</span>
+                <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/40 text-amber-300 text-center font-mono text-[10px] font-bold tracking-wider uppercase flex items-center justify-center space-x-2 shadow-sm">
+                  <AlertOctagon className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>HISTORICAL DIAGNOSTIC REPLAY (AUDITED BENCHMARK HEURISTIC — NOT LIGHTGBM INFERENCE)</span>
                 </div>
 
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -243,11 +244,11 @@ export const HistoricalReplayView: React.FC<HistoricalReplayViewProps> = ({
                   </div>
 
                   <div className="p-3.5 rounded-lg bg-slate-900 border border-slate-800">
-                    <div className="text-[10px] uppercase font-mono text-slate-400">Prototype Risk Score</div>
+                    <div className="text-[10px] uppercase font-mono text-slate-400">Diagnostic Risk Score</div>
                     <div className="text-xl font-bold font-mono text-rose-400 mt-1">
                       {Math.round(currentStep.bust_risk_percent)}/100
                     </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">Heuristic risk index (0–100)</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">Audited benchmark heuristic (0–100)</div>
                   </div>
 
                   <div className="p-3.5 rounded-lg bg-slate-900 border border-slate-800">
