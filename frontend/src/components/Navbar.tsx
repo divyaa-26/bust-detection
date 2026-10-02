@@ -62,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {isReal ? (
           <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1 text-center font-mono text-[10px] text-emerald-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>REAL GFS + IMD TRAINED MODEL (NOAA GFS 0.25° + IMD DAILY GRIDDED VERIFICATION)</span>
+            <span>REAL TRAINED MODEL (NOAA GFS 0.25° + OPEN-METEO 03Z–03Z CENTROID VERIFICATION)</span>
           </div>
         ) : (
           <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-1 text-center font-mono text-[10px] text-amber-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
@@ -124,6 +124,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
                 <span className="text-slate-500">•</span>
                 <span className="text-emerald-400 font-semibold text-[11px]">AIFS</span>
+                <span className="text-slate-500">•</span>
+                <span className="text-amber-400 font-semibold text-[11px]" title="ECMWF IFS: Open WMO Ensemble Subset">IFS</span>
                 <span className="text-slate-500">•</span>
                 <span className="text-rose-400 line-through text-[11px]" title="NCUM: Institutional MoES access required (Honest Disconnected State)">
                   NCUM
@@ -196,6 +198,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
                 <p className="text-slate-300 mt-1">Agency: ECMWF • Resolution: 0.25° (~28km)</p>
                 <p className="text-slate-400 text-[11px] mt-0.5">Legitimate open access under ECMWF Open Data license.</p>
+              </div>
+
+              <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-500/30">
+                <div className="flex items-center justify-between font-bold text-amber-400">
+                  <span>ECMWF IFS (Ensemble Prediction System)</span>
+                  <span className="bg-amber-500/20 px-2 py-0.5 rounded text-[10px]">PARTIAL (WMO)</span>
+                </div>
+                <p className="text-slate-300 mt-1">Agency: ECMWF • Resolution: 0.4° (WMO Open Subset)</p>
+                <p className="text-slate-400 text-[11px] mt-0.5">WMO essential / open subset data feeds connected.</p>
               </div>
 
               <div className="p-3 rounded-lg bg-rose-950/30 border border-rose-500/30">
