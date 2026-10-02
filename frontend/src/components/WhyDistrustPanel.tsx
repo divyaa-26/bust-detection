@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   AlertOctagon, 
   HelpCircle, 
@@ -16,10 +16,14 @@ import {
 } from 'lucide-react';
 import { PredictionDetail, OperationalPriority } from '../types';
 import { api } from '../services/api';
+import { LeadTimeRiskCurve, TrajectoryPoint } from './LeadTimeRiskCurve';
 
 interface WhyDistrustPanelProps {
   prediction: PredictionDetail | null;
   onFeedbackSubmitted?: () => void;
+  leadTrajectory?: TrajectoryPoint[];
+  isLoadingTrajectory?: boolean;
+  onSelectLeadTime?: (lead: number) => void;
 }
 
 interface FeatureDisplayMetadata {
@@ -101,13 +105,45 @@ const getFeatureDisplay = (featureName: string, val: number): FeatureDisplayMeta
 
 export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
   prediction,
-  onFeedbackSubmitted
+  onFeedbackSubmitted,
+  leadTrajectory,
+  isLoadingTrajectory,
+  onSelectLeadTime
 }) => {
   const [feedbackDecision, setFeedbackDecision] = useState<'CONFIRM' | 'REJECT' | 'NEEDS_REVIEW' | null>(null);
   const [userRole, setUserRole] = useState('Senior Duty Forecaster');
   const [feedbackNote, setFeedbackNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+
+  const [internalTrajectory, setInternalTrajectory] = useState<TrajectoryPoint[]>([]);
+  const [internalLoading, setInternalLoading] = useState(false);
+
+  useEffect(() => {
+    if (leadTrajectory && leadTrajectory.length > 0) return;
+    if (!prediction?.region_id) return;
+
+    let isMounted = true;
+    setInternalLoading(true);
+    api.getRegionLeadMatrix()
+      .then((data) => {
+        if (!isMounted) return;
+        const regCells = (data?.matrix || []).filter((c: any) => c.region_id === prediction.region_id);
+        setInternalTrajectory(regCells);
+        setInternalLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching lead trajectory:', err);
+        if (isMounted) setInternalLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [prediction?.region_id, leadTrajectory]);
+
+  const activeTrajectory = (leadTrajectory && leadTrajectory.length > 0) ? leadTrajectory : internalTrajectory;
+  const isTrajectoryLoading = isLoadingTrajectory !== undefined ? isLoadingTrajectory : internalLoading;
 
   if (!prediction) {
     return (
@@ -293,6 +329,20 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
             </div>
           </div>
         </div>
+
+        {/* ======================================================== */}
+        {/* LEAD-TIME RISK EVOLUTION (D+1 to D+10)                  */}
+        {/* ======================================================== */}
+        <LeadTimeRiskCurve
+          regionId={prediction.region_id}
+          regionName={prediction.region_name}
+          currentLead={prediction.lead_time_days}
+          currentProbability={prediction.calibrated_probability_estimate}
+          currentRiskTier={prediction.operational_priority}
+          trajectory={activeTrajectory}
+          isLoading={isTrajectoryLoading}
+          onSelectLead={onSelectLeadTime}
+        />
 
         {/* ======================================================== */}
         {/* STEP 2: WHY? (TreeSHAP Explainability)                   */}

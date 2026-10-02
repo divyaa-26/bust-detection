@@ -131,8 +131,21 @@ export const api = {
   },
 
   async getRegionLeadMatrix(variable: string = 'precipitation_mm_day', forecastRun: string = '2024-07-15T00:00:00Z') {
-    const res = await fetchWithFallback(`/matrix/region-lead?variable=${variable}&forecast_run=${forecastRun}`);
-    if (!res.ok) throw new Error(`Failed to fetch region lead matrix: HTTP ${res.status}`);
-    return res.json();
+    const cacheKey = `${variable}_${forecastRun}`;
+    if (!regionLeadMatrixCache.has(cacheKey)) {
+      const promise = fetchWithFallback(`/matrix/region-lead?variable=${variable}&forecast_run=${forecastRun}`)
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`Failed to fetch region lead matrix: HTTP ${res.status}`);
+          return res.json();
+        })
+        .catch((err) => {
+          regionLeadMatrixCache.delete(cacheKey);
+          throw err;
+        });
+      regionLeadMatrixCache.set(cacheKey, promise);
+    }
+    return regionLeadMatrixCache.get(cacheKey)!;
   }
 };
+
+const regionLeadMatrixCache = new Map<string, Promise<any>>();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Sliders, 
   MapPin, 
@@ -43,6 +43,8 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isAlertCenterOpen, setIsAlertCenterOpen] = useState<boolean>(false);
+  const [matrixData, setMatrixData] = useState<any>(null);
+  const [isLoadingMatrix, setIsLoadingMatrix] = useState<boolean>(true);
 
   // Existing risk-tier filter: count regions marked as CRITICAL or HIGH_REVIEW
   const alertFlagsCount = predictions.filter(
@@ -53,6 +55,26 @@ export const App: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [leadTimeDays, forecastVariable, forecastRun]);
+
+  // Fetch full D+1 to D+10 Spatio-Temporal Matrix when Variable or Forecast Run changes
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoadingMatrix(true);
+    api.getRegionLeadMatrix(forecastVariable, forecastRun)
+      .then((data) => {
+        if (isMounted) {
+          setMatrixData(data);
+          setIsLoadingMatrix(false);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch region-lead matrix:', err);
+        if (isMounted) setIsLoadingMatrix(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [forecastVariable, forecastRun]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -73,6 +95,12 @@ export const App: React.FC = () => {
   };
 
   const selectedPrediction = predictions.find((p) => p.region_id === selectedRegionId) || predictions[0] || null;
+
+  // Extract selected subdivision genuine D+1 to D+10 trajectory
+  const selectedTrajectory = useMemo(() => {
+    if (!matrixData?.matrix || !selectedPrediction?.region_id) return [];
+    return matrixData.matrix.filter((c: any) => c.region_id === selectedPrediction.region_id);
+  }, [matrixData, selectedPrediction?.region_id]);
 
   return (
     <Layout
@@ -193,6 +221,9 @@ export const App: React.FC = () => {
               <WhyDistrustPanel
                 prediction={selectedPrediction}
                 onFeedbackSubmitted={loadData}
+                leadTrajectory={selectedTrajectory}
+                isLoadingTrajectory={isLoadingMatrix}
+                onSelectLeadTime={setLeadTimeDays}
               />
             </div>
           </div>
