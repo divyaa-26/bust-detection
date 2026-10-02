@@ -95,8 +95,8 @@ export const ReviewFlagsDrawer: React.FC<ReviewFlagsDrawerProps> = ({
           flaggedPredictions.map((pred) => {
             const isSelected = pred.region_id === selectedRegionId;
             const isCritical = pred.operational_priority === 'CRITICAL — INSPECTION REQUIRED';
-            const topDriver = pred.why_distrust_drivers?.[0]?.driver_name ||
-              pred.shap_attributions?.[0]?.display_name ||
+            const topDriver = pred.shap_attributions?.[0]?.display_name ||
+              pred.why_distrust_drivers?.[0]?.driver_name ||
               'Synoptic Anomaly';
 
             return (
