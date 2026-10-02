@@ -13,7 +13,7 @@ class FeedbackStore:
     """
     
     def __init__(self, storage_path: Optional[Path] = None):
-        self.storage_path = storage_path or config.feedback_file
+        self.storage_path = Path(storage_path) if storage_path else config.feedback_file
         self.storage_path.parent.mkdir(parents=True, exist_ok=True)
         if not self.storage_path.exists():
             with open(self.storage_path, "w") as f:

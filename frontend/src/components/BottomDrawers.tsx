@@ -8,7 +8,8 @@ import {
   ChevronDown,
   LayoutGrid,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  MessageSquare
 } from 'lucide-react';
 import { PriorityQueueItem, PredictionDetail, RegionLeadMatrixResponse } from '../types';
 import { api } from '../services/api';
@@ -26,15 +27,21 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
   onSelectRegion,
   leadTimeDays
 }) => {
-  const [activeTab, setActiveTab] = useState<'priority' | 'matrix' | 'degradation' | 'comparison' | 'provenance'>('priority');
+  const [activeTab, setActiveTab] = useState<'priority' | 'matrix' | 'degradation' | 'comparison' | 'provenance' | 'feedback'>('priority');
   const [isExpanded, setIsExpanded] = useState(false);
   const [matrixData, setMatrixData] = useState<RegionLeadMatrixResponse | null>(null);
   const [isLoadingMatrix, setIsLoadingMatrix] = useState(false);
   const [modelMetrics, setModelMetrics] = useState<any>(null);
+  const [feedbackList, setFeedbackList] = useState<any[]>([]);
 
-  const handleTabClick = (tab: 'priority' | 'matrix' | 'degradation' | 'comparison' | 'provenance') => {
+  const handleTabClick = (tab: 'priority' | 'matrix' | 'degradation' | 'comparison' | 'provenance' | 'feedback') => {
     setActiveTab(tab);
     setIsExpanded(true);
+    if (tab === 'feedback') {
+      api.getFeedbackList()
+        .then((data) => setFeedbackList(data))
+        .catch((err) => console.error("Error loading feedback list:", err));
+    }
   };
 
   // Prefetch matrix and model metrics on mount for instant tab switching
@@ -126,6 +133,18 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
           >
             <FileCheck2 className="w-3.5 h-3.5" />
             <span>Provenance & Governance</span>
+          </button>
+
+          <button
+            onClick={() => handleTabClick('feedback')}
+            className={`px-3 py-1 rounded text-xs font-semibold flex items-center space-x-1.5 transition whitespace-nowrap ${
+              activeTab === 'feedback' && isExpanded
+                ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Feedback Ledger ({feedbackList.length})</span>
           </button>
         </div>
 
@@ -487,6 +506,82 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                   <span className="text-emerald-400 font-mono">03Z–03Z (Anti-Leakage Certified)</span>
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === 'feedback' && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs text-slate-300">
+                <span className="font-semibold">
+                  Forecaster Feedback & Human-in-the-Loop Audit Ledger ({feedbackList.length} Records)
+                </span>
+                <span className="font-mono text-slate-400 text-[11px]">
+                  Feedback is audit data only — Offline model governance & evaluation
+                </span>
+              </div>
+
+              {feedbackList.length === 0 ? (
+                <div className="py-8 text-center text-slate-500 text-xs">
+                  No forecaster feedback records submitted yet. Select a subdivision on the map to log feedback.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="text-slate-400 border-b border-slate-800 text-[11px] uppercase tracking-wider font-mono">
+                        <th className="py-2 px-3">Timestamp</th>
+                        <th className="py-2 px-3">Subdivision</th>
+                        <th className="py-2 px-3">Lead</th>
+                        <th className="py-2 px-3">Calibrated P(Bust)</th>
+                        <th className="py-2 px-3">Risk Tier</th>
+                        <th className="py-2 px-3">Decision</th>
+                        <th className="py-2 px-3">Forecaster Notes</th>
+                        <th className="py-2 px-3">Model Version</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {feedbackList.map((item, idx) => (
+                        <tr key={item.id || idx} className="hover:bg-slate-800/60 text-slate-300">
+                          <td className="py-2 px-3 font-mono text-[11px] text-slate-400 whitespace-nowrap">
+                            {new Date(item.timestamp).toLocaleString()}
+                          </td>
+                          <td className="py-2 px-3 font-semibold text-slate-200">
+                            {item.region_id}
+                          </td>
+                          <td className="py-2 px-3 font-mono text-slate-300">
+                            D+{item.lead_time_days}
+                          </td>
+                          <td className="py-2 px-3 font-mono font-bold text-rose-400">
+                            {item.calibrated_probability != null ? `${(item.calibrated_probability * 100).toFixed(1)}%` : 'N/A'}
+                          </td>
+                          <td className="py-2 px-3">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700 bg-slate-900/80 text-slate-300">
+                              {item.risk_tier || 'N/A'}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 font-semibold">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded border tracking-wide ${
+                              item.decision === 'CONFIRM'
+                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                                : item.decision === 'REJECT'
+                                ? 'bg-rose-500/20 text-rose-400 border-rose-500/40'
+                                : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                            }`}>
+                              {item.decision === 'CONFIRM' ? 'CONFIRM BUST RISK' : item.decision === 'REJECT' ? 'REJECT / FALSE ALARM' : 'NEEDS REVIEW'}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 text-slate-300 max-w-xs truncate" title={item.notes || ''}>
+                            {item.notes || <span className="text-slate-600 italic">No notes</span>}
+                          </td>
+                          <td className="py-2 px-3 font-mono text-[10px] text-slate-400 truncate max-w-[140px]" title={item.model_version || ''}>
+                            {item.model_version || 'LightGBM-v1.0-Real-NWP-IMD-Calibrated'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
         </div>
