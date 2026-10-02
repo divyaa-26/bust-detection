@@ -35,6 +35,37 @@ def test_priority_endpoint():
     assert queue[0]["rank"] == 1
     assert "operational_priority" in queue[0]
 
+def test_feedback_submission_and_retrieval():
+    payload = {
+        "prediction_id": "PRED-GFS-SUB_22-D5-TEST",
+        "forecast_id": "FCST-SUB_22-D5",
+        "region_id": "SUB_22",
+        "lead_time_days": 5,
+        "user_name": "Duty Forecaster",
+        "user_role": "Senior Duty Forecaster",
+        "decision": "CONFIRM",
+        "decision_reason": "Convective parameter disparity in coastal radar sounding",
+        "notes": "Sounding indicates high CAPE not resolved in synoptic cycle",
+        "calibrated_probability": 0.28,
+        "risk_tier": "CRITICAL — INSPECTION REQUIRED",
+        "model_version": "LightGBM-v1.0-Real-NWP-IMD-Calibrated"
+    }
+    res_post = client.post("/api/feedback", json=payload)
+    assert res_post.status_code == 200
+    rec = res_post.json()
+    assert rec["decision"] == "CONFIRM"
+    assert rec["calibrated_probability"] == 0.28
+    assert rec["risk_tier"] == "CRITICAL — INSPECTION REQUIRED"
+    assert rec["model_version"] == "LightGBM-v1.0-Real-NWP-IMD-Calibrated"
+    assert "feedback_id" in rec
+    assert "timestamp" in rec
+
+    res_get = client.get("/api/feedback")
+    assert res_get.status_code == 200
+    items = res_get.json()
+    assert len(items) >= 1
+    assert any(i["feedback_id"] == rec["feedback_id"] for i in items)
+
 def test_historical_events_endpoint():
     res = client.get("/api/events")
     assert res.status_code == 200

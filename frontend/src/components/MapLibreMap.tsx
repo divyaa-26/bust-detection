@@ -219,6 +219,18 @@ export const MapLibreMap: React.FC<MapLibreMapProps> = ({
     if (map.current.getLayer('subdivisions-selected-outline')) {
       map.current.setFilter('subdivisions-selected-outline', ['==', 'subdivision_id', selectedRegionId || '']);
     }
+
+    // Smoothly pan and center map to selected region if found
+    if (selectedRegionId && map.current) {
+      const pred = predictions.find((p) => p.region_id === selectedRegionId);
+      if (pred && pred.center_lon && pred.center_lat) {
+        map.current.easeTo({
+          center: [pred.center_lon, pred.center_lat],
+          zoom: Math.max(map.current.getZoom(), 5.2),
+          duration: 800
+        });
+      }
+    }
   }, [mapLoaded, geojsonData, predictions, activeLayer, selectedRegionId]);
 
   function getFillColorExpression(layerType: string): any {

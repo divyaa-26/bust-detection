@@ -26,6 +26,7 @@ import { FeedbackQueueView } from './views/FeedbackQueueView';
 import { RealtimeDisagreementView } from './views/RealtimeDisagreementView';
 import { PredictionDetail, PriorityQueueItem, DataMode } from './types';
 import { api } from './services/api';
+import { ReviewFlagsDrawer } from './components/ReviewFlagsDrawer';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
@@ -41,6 +42,12 @@ export const App: React.FC = () => {
   const [replayStepIndex, setReplayStepIndex] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isAlertCenterOpen, setIsAlertCenterOpen] = useState<boolean>(false);
+
+  // Existing risk-tier filter: count regions marked as CRITICAL or HIGH_REVIEW
+  const alertFlagsCount = predictions.filter(
+    (p) => p.operational_priority === 'CRITICAL — INSPECTION REQUIRED' || p.operational_priority === 'HIGH — REVIEW'
+  ).length;
 
   // Fetch Risk Map and Priority Data when Lead Time, Variable, or Forecast Run changes
   useEffect(() => {
@@ -142,6 +149,27 @@ export const App: React.FC = () => {
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-sky-400' : ''}`} />
               </button>
+
+              <div className="h-4 w-px bg-slate-800 shrink-0" />
+
+              {/* Review Flags / Alert Center Trigger */}
+              <button
+                onClick={() => setIsAlertCenterOpen(true)}
+                className={`h-[26px] px-2.5 rounded text-xs font-semibold flex items-center space-x-1.5 transition shrink-0 border ${
+                  alertFlagsCount > 0
+                    ? 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border-rose-500/40 shadow-sm'
+                    : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700'
+                }`}
+                title="Open Review Flags / Alert Center Drawer"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+                <span>Review Flags</span>
+                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                  alertFlagsCount > 0 ? 'bg-rose-500/40 text-rose-200' : 'bg-slate-800 text-slate-400'
+                }`}>
+                  {alertFlagsCount}
+                </span>
+              </button>
             </div>
           </div>
 
@@ -178,6 +206,17 @@ export const App: React.FC = () => {
               leadTimeDays={leadTimeDays}
             />
           </div>
+
+          {/* Review Flags / Alert Center Drawer */}
+          <ReviewFlagsDrawer
+            isOpen={isAlertCenterOpen}
+            onClose={() => setIsAlertCenterOpen(false)}
+            predictions={predictions}
+            selectedRegionId={selectedRegionId}
+            onSelectRegion={(regId) => {
+              setSelectedRegionId(regId);
+            }}
+          />
         </div>
       )}
 

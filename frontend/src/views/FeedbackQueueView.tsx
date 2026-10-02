@@ -28,7 +28,7 @@ export const FeedbackQueueView: React.FC = () => {
           <h2 className="text-xl font-bold text-slate-100">Forecaster Review Feedback Ledger</h2>
         </div>
         <p className="text-xs text-slate-400 mt-1">
-          Operational forecaster adjudication records for retrospective scientific verification, model auditing, and future retraining datasets.
+          Feedback logged for offline evaluation and model governance. Feedback is audit data only: it does NOT modify real-time probabilities or thresholds, and does not represent verified ground truth.
         </p>
       </div>
 
@@ -81,7 +81,9 @@ export const FeedbackQueueView: React.FC = () => {
                   <th className="py-2.5 px-3">Timestamp (UTC)</th>
                   <th className="py-2.5 px-3">Subdivision</th>
                   <th className="py-2.5 px-3">Lead</th>
-                  <th className="py-2.5 px-3">Reviewer Role</th>
+                  <th className="py-2.5 px-3">Calibrated P(Bust)</th>
+                  <th className="py-2.5 px-3">Risk Tier</th>
+                  <th className="py-2.5 px-3">Model Version</th>
                   <th className="py-2.5 px-3">Decision</th>
                   <th className="py-2.5 px-3">Reason & Notes</th>
                 </tr>
@@ -93,7 +95,15 @@ export const FeedbackQueueView: React.FC = () => {
                     <td className="py-2.5 px-3 text-slate-400">{item.timestamp?.slice(0, 19).replace('T', ' ')}</td>
                     <td className="py-2.5 px-3 font-semibold text-slate-200">{item.region_id}</td>
                     <td className="py-2.5 px-3 text-slate-300">D+{item.lead_time_days}</td>
-                    <td className="py-2.5 px-3 text-slate-400">{item.user_role}</td>
+                    <td className="py-2.5 px-3 text-amber-300 font-mono font-bold">
+                      {item.calibrated_probability != null ? `${(item.calibrated_probability * 100).toFixed(1)}%` : '—'}
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-300 text-[11px] font-sans">
+                      {item.risk_tier || '—'}
+                    </td>
+                    <td className="py-2.5 px-3 text-slate-400 text-[10px] truncate max-w-[140px]" title={item.model_version || ''}>
+                      {item.model_version ? item.model_version.replace('LightGBM-v1.0-', '') : '—'}
+                    </td>
                     <td className="py-2.5 px-3">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
                         item.decision === 'CONFIRM'

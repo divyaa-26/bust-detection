@@ -182,6 +182,9 @@ export interface ForecasterFeedbackRecord {
   decision_reason: string;
   observed_actual_value?: number | null;
   notes?: string | null;
+  calibrated_probability?: number | null;
+  risk_tier?: string | null;
+  model_version?: string | null;
   timestamp?: string;
 }
 

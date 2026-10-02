@@ -32,6 +32,9 @@ class FeedbackStore:
             decision_reason=request.decision_reason,
             observed_actual_value=request.observed_actual_value,
             notes=request.notes,
+            calibrated_probability=request.calibrated_probability,
+            risk_tier=request.risk_tier,
+            model_version=request.model_version,
             timestamp=datetime.now(timezone.utc).isoformat()
         )
         

@@ -190,6 +190,9 @@ class ForecasterFeedbackRequest(BaseModel):
     decision_reason: str
     observed_actual_value: Optional[float] = None
     notes: Optional[str] = None
+    calibrated_probability: Optional[float] = None
+    risk_tier: Optional[str] = None
+    model_version: Optional[str] = None
 
 class ForecasterFeedbackRecord(ForecasterFeedbackRequest):
     feedback_id: str

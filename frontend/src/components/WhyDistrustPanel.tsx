@@ -54,7 +54,10 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
         user_role: userRole,
         decision: decision,
         decision_reason: feedbackNote || `Forecaster marked as ${decision}`,
-        notes: feedbackNote
+        notes: feedbackNote,
+        calibrated_probability: prediction.calibrated_probability_estimate,
+        risk_tier: prediction.operational_priority,
+        model_version: prediction.model_name
       });
       setSubmittedMessage(`Feedback [${decision}] recorded for governance audit.`);
       setTimeout(() => setSubmittedMessage(null), 4000);
@@ -215,40 +218,56 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
             <div className="flex items-center justify-between pb-2 mb-2 border-b border-sky-500/20">
               <div className="flex items-center space-x-2 text-sky-400">
                 <Layers className="w-4 h-4" />
-                <h3 className="font-bold text-xs uppercase tracking-wider">Explainable AI (TreeSHAP Attributions)</h3>
+                <h3 className="font-bold text-xs uppercase tracking-wider">WHY WAS THIS FLAGGED?</h3>
               </div>
               <span className="text-[10px] text-sky-300 font-mono">
-                Model Drivers
+                Top 3 TreeSHAP Contributors
               </span>
             </div>
-            <div className="space-y-1.5">
-              {prediction.shap_attributions.slice(0, 5).map((attr, idx) => {
+            <div className="text-[11px] text-slate-400 mb-2 leading-relaxed font-sans">
+              What is the model seeing? Top feature drivers contributing directly to calibrated bust risk:
+            </div>
+            <div className="space-y-2">
+              {prediction.shap_attributions.slice(0, 3).map((attr, idx) => {
                 const isRiskIncrease = attr.attribution_value > 0;
                 return (
-                  <div key={idx} className="p-1.5 rounded bg-slate-900/80 border border-slate-800 text-[11px]">
+                  <div key={idx} className="p-2 rounded bg-slate-900/90 border border-slate-800 text-[11px]">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-slate-200 text-[11px]">{attr.display_name}</span>
-                      <span className={`font-mono font-bold text-[11px] ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
-                        {isRiskIncrease ? `+${attr.attribution_value.toFixed(3)}` : attr.attribution_value.toFixed(3)}
+                      <div className="flex items-center space-x-1.5 min-w-0">
+                        <span className="w-4 h-4 rounded bg-slate-800 text-sky-400 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                          #{idx + 1}
+                        </span>
+                        <span className="font-semibold text-slate-200 text-[11px] truncate">
+                          {attr.display_name}
+                        </span>
+                      </div>
+                      <span className={`font-mono font-bold text-xs shrink-0 ml-2 ${isRiskIncrease ? 'text-rose-400' : 'text-emerald-400'}`}>
+                        {isRiskIncrease ? `+${attr.attribution_value.toFixed(4)}` : attr.attribution_value.toFixed(4)}
                       </span>
                     </div>
-                    <div className="mt-1 flex items-center space-x-2">
+
+                    <div className="mt-1.5 flex items-center space-x-2">
                       <div className="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden flex">
                         {isRiskIncrease ? (
                           <div 
-                            className="bg-rose-500 h-full rounded-full"
-                            style={{ width: `${Math.min(100, Math.max(5, attr.abs_magnitude * 35))}%` }}
+                            className="bg-rose-500 h-full rounded-full transition-all"
+                            style={{ width: `${Math.min(100, Math.max(8, attr.abs_magnitude * 120))}%` }}
                           />
                         ) : (
                           <div 
-                            className="bg-emerald-500 h-full rounded-full"
-                            style={{ width: `${Math.min(100, Math.max(5, attr.abs_magnitude * 35))}%` }}
+                            className="bg-emerald-500 h-full rounded-full transition-all"
+                            style={{ width: `${Math.min(100, Math.max(8, attr.abs_magnitude * 120))}%` }}
                           />
                         )}
                       </div>
-                      <span className="text-[10px] font-mono text-slate-400">
-                        {attr.direction === 'INCREASES_BUST_RISK' ? 'Increases Risk' : 'Reduces Risk'}
+                      <span className={`text-[10px] font-mono shrink-0 ${isRiskIncrease ? 'text-rose-300' : 'text-emerald-300'}`}>
+                        {attr.direction === 'INCREASES_BUST_RISK' ? 'Increases Bust Risk' : 'Reduces Bust Risk'}
                       </span>
+                    </div>
+
+                    <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-slate-500">
+                      <span>Feature Input: <strong className="text-slate-300">{attr.feature_input_value}</strong></span>
+                      <span>Magnitude: <strong className="text-slate-300">{attr.abs_magnitude.toFixed(4)}</strong></span>
                     </div>
                   </div>
                 );
@@ -360,11 +379,15 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
 
         {/* Human In The Loop Forecaster Action */}
         <div className="p-3 rounded-lg bg-slate-900 border border-slate-700/80">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
-              Forecaster Review Action
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-200">
+              Forecaster Review Feedback
             </span>
-            <span className="text-[10px] text-slate-400 font-mono">HITL Protocol</span>
+            <span className="text-[10px] text-sky-400 font-mono">HITL Governance</span>
+          </div>
+
+          <div className="text-[10px] text-slate-400 mb-2 leading-relaxed">
+            Feedback logged for offline evaluation and model governance. Feedback is audit data only: it does NOT modify real-time probabilities or thresholds, and does not represent verified ground truth.
           </div>
 
           {submittedMessage && (
@@ -379,36 +402,45 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
               onClick={() => handleFeedbackSubmit('CONFIRM')}
               disabled={isSubmitting}
               className="flex-1 py-1.5 px-2 rounded bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center justify-center space-x-1 transition"
+              title="Confirm Bust Risk for offline evaluation"
             >
               <Check className="w-3.5 h-3.5" />
-              <span>Confirm Flag</span>
-            </button>
-            <button
-              onClick={() => handleFeedbackSubmit('NEEDS_REVIEW')}
-              disabled={isSubmitting}
-              className="flex-1 py-1.5 px-2 rounded bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 text-xs font-semibold flex items-center justify-center space-x-1 transition"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span>Hold / Watch</span>
+              <span>Confirm Bust Risk</span>
             </button>
             <button
               onClick={() => handleFeedbackSubmit('REJECT')}
               disabled={isSubmitting}
               className="flex-1 py-1.5 px-2 rounded bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold flex items-center justify-center space-x-1 transition"
+              title="Reject / False Alarm classification"
             >
               <X className="w-3.5 h-3.5" />
-              <span>Dismiss</span>
+              <span>Reject / False Alarm</span>
+            </button>
+            <button
+              onClick={() => handleFeedbackSubmit('NEEDS_REVIEW')}
+              disabled={isSubmitting}
+              className="flex-1 py-1.5 px-2 rounded bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 text-xs font-semibold flex items-center justify-center space-x-1 transition"
+              title="Flag for duty watch and cycle re-check"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Needs Review</span>
             </button>
           </div>
 
           <div className="mt-2">
             <input
               type="text"
-              placeholder="Optional forecaster review notes / sounding notes..."
+              placeholder="Optional forecaster note (e.g., radar sounding, synoptic override)..."
               value={feedbackNote}
               onChange={(e) => setFeedbackNote(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-sky-500"
             />
+          </div>
+
+          {/* Quick audit snapshot */}
+          <div className="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-500 flex items-center justify-between font-mono">
+            <span>Audit Target: <strong className="text-slate-300">{prediction.region_id} (D+{prediction.lead_time_days})</strong></span>
+            <span>P(Bust): <strong className="text-amber-400">{(prediction.calibrated_probability_estimate * 100).toFixed(1)}%</strong></span>
           </div>
         </div>
       </div>
