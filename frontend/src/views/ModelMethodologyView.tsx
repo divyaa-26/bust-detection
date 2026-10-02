@@ -64,12 +64,12 @@ export const ModelMethodologyView: React.FC = () => {
         <div className="flex items-center space-x-2">
           <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-xs uppercase border border-emerald-500/30 flex items-center space-x-1">
             <Sparkles className="w-3 h-3 text-emerald-400" />
-            <span>REAL GFS + IMD TRAINED MODEL</span>
+            <span>REAL GFS + OPEN-METEO VERIFIED MODEL</span>
           </span>
           <h2 className="text-xl font-bold text-slate-100">ML Architecture & Real-Data Training Methodology</h2>
         </div>
         <p className="text-xs text-slate-400 mt-1">
-          Complete scientific specification of the LightGBM bust risk model trained on genuine NOAA GFS operational runs and IMD daily observations.
+          Complete scientific specification of the LightGBM bust risk model trained on genuine NOAA GFS operational runs and Open-Meteo 03Z–03Z centroid-verified observations.
         </p>
       </div>
 
@@ -77,12 +77,12 @@ export const ModelMethodologyView: React.FC = () => {
       <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-xs">
         <div className="flex items-center space-x-2 text-emerald-400 font-bold mb-1">
           <ShieldCheck className="w-4 h-4" />
-          <span>Real NWP + IMD Verification Model Active</span>
+          <span>Real NWP + Open-Meteo Verification Model Active</span>
         </div>
         <p className="text-slate-300 leading-relaxed text-[11px]">
           The synthetic prototype model has been succeeded by a <strong>genuine historical ML model</strong> trained on 
           <strong> 13,680 genuine forecast-verification pairs</strong> across 38 distinct initialization dates from Monsoon 2023 and Monsoon 2024. 
-          All verification data uses official 0.25° daily gridded rainfall with mathematically verified 03Z–03Z accumulation windows. 
+          All verification data uses Open-Meteo historical archive daily rainfall with mathematically verified 03Z–03Z accumulation windows at subdivision centroids. 
           Zero synthetic or fabricated data rows exist in the real training pipeline.
         </p>
       </div>
@@ -194,7 +194,7 @@ export const ModelMethodologyView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2 font-mono text-[11px]">
           <div className="p-2.5 rounded bg-slate-950 border border-slate-800 text-sky-300">
             python -m data.training.ingest_real_expanded_data<br />
-            <span className="text-slate-500 text-[10px]"># 13,680 GFS-IMD real pairs</span>
+            <span className="text-slate-500 text-[10px]"># 13,680 GFS-verified real pairs</span>
           </div>
           <div className="p-2.5 rounded bg-slate-950 border border-slate-800 text-sky-300">
             python -m data.training.audit_expanded_dataset<br />

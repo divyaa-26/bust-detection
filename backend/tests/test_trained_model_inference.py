@@ -6,7 +6,7 @@ def test_real_trained_reliability_model_inference():
     model = TrainedReliabilityModel()
     assert model.is_loaded is True, "TrainedReliabilityModel artifacts must be loaded"
     assert model.is_real_model is True, "Must prioritize and load REAL NWP + IMD Verification Model"
-    assert model.prototype_badge == "REAL GFS + IMD TRAINED MODEL"
+    assert model.prototype_badge == "REAL GFS + OPEN-METEO VERIFIED MODEL"
     
     feats = ModelFeatures(
         region_id="SUB_22",
@@ -30,7 +30,7 @@ def test_real_trained_reliability_model_inference():
     assert round(out.calibrated_probability + out.confidence, 2) == 1.0, "Confidence must strictly equal 1 - P(Bust)"
     assert out.confidence_score_pct == round(out.confidence * 100.0, 1)
     assert out.expected_error_low < out.expected_error_high
-    assert out.prototype_badge == "REAL GFS + IMD TRAINED MODEL"
+    assert out.prototype_badge == "REAL GFS + OPEN-METEO VERIFIED MODEL"
     assert out.shap_attributions is not None
     assert len(out.shap_attributions) > 0
     
@@ -121,6 +121,6 @@ def test_all_36_subdivisions_train_serve_encoding_parity():
         )
         out = model.predict(feats)
         assert 0.0 <= out.calibrated_probability <= 1.0
-        assert out.prototype_badge == "REAL GFS + IMD TRAINED MODEL"
+        assert out.prototype_badge == "REAL GFS + OPEN-METEO VERIFIED MODEL"
         assert len(out.shap_attributions) == 10
 

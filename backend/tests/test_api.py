@@ -196,7 +196,7 @@ def test_model_metrics_endpoint():
     data = res.json()
     assert data["status"] == "TRAINED_REAL_MODEL"
     assert data["is_real_model"] is True
-    assert data["model_badge"] == "REAL GFS + IMD TRAINED MODEL"
+    assert data["model_badge"] == "REAL GFS + OPEN-METEO VERIFIED MODEL"
     
     # Verify calibration block exposes actual committed Isotonic calibration results
     calib = data["calibration"]

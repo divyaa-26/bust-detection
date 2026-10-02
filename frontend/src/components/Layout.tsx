@@ -52,7 +52,7 @@ export const Layout: React.FC<LayoutProps> = ({
       ) : (
         <div className="bg-emerald-500/15 border-b border-emerald-500/30 px-4 py-1 text-center font-mono text-[10px] text-emerald-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>REAL GFS + IMD TRAINED MODEL (NOAA GFS 0.25° + IMD DAILY GRIDDED VERIFICATION)</span>
+          <span>REAL GFS + OPEN-METEO VERIFIED MODEL (NOAA GFS 0.25° + 03Z–03Z CENTROID VERIFICATION)</span>
         </div>
       )}
 

@@ -158,8 +158,8 @@ class TrainedReliabilityModel(BaseReliabilityModel):
                 self.is_loaded = True
                 self.is_real_model = True
                 self.version = "LightGBM-v1.0-Real-NWP-IMD-Calibrated"
-                self.prototype_badge = "REAL GFS + IMD TRAINED MODEL"
-                print("[TrainedReliabilityModel] Successfully loaded REAL NWP + IMD Verification Model.")
+                self.prototype_badge = "REAL GFS + OPEN-METEO VERIFIED MODEL"
+                print("[TrainedReliabilityModel] Successfully loaded REAL NWP + Open-Meteo Verification Model.")
                 return
             except Exception as e:
                 print(f"[TrainedReliabilityModel] Warning loading real artifacts: {e}. Falling back to synthetic.")
@@ -328,7 +328,7 @@ class TrainedReliabilityModel(BaseReliabilityModel):
                 "is_real_model": True,
                 "version": self.version,
                 "badge": self.prototype_badge,
-                "data_source": "NOAA GFS 0.25° Operational GRIB2 + IMD 24h Daily Gridded Observations",
+                "data_source": "NOAA GFS 0.25° Operational GRIB2 + Open-Meteo Historical Archive 24h Verification",
                 "training_samples": self.metrics.get("train_samples", 7200),
                 "validation_samples": self.metrics.get("validation_samples", 3600),
                 "test_samples": self.metrics.get("test_samples", 2880),

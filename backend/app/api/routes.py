@@ -324,8 +324,8 @@ def get_model_metrics():
         }
         return {
             "status": "TRAINED_REAL_MODEL",
-            "model_type": "LightGBM Binary Classifier + Isotonic Calibration (Real NWP + IMD Model)",
-            "model_badge": "REAL GFS + IMD TRAINED MODEL",
+            "model_type": "LightGBM Binary Classifier + Isotonic Calibration (Real NWP Model)",
+            "model_badge": "REAL GFS + OPEN-METEO VERIFIED MODEL",
             "is_real_model": True,
             "dataset": {
                 "training_samples": model_info.get("training_samples", 7200),
@@ -333,7 +333,7 @@ def get_model_metrics():
                 "test_samples": model_info.get("test_samples", 2880),
                 "total_samples": 13680,
                 "initialization_dates": 38,
-                "data_source": "NOAA GFS 0.25° Operational GRIB2 + IMD 24h Daily Gridded Observations",
+                "data_source": "NOAA GFS 0.25° Operational GRIB2 + Open-Meteo Historical Archive 24h Verification",
                 "test_bust_base_rate": model_info.get("test_bust_base_rate", "3.96%")
             },
             "metrics": metrics,

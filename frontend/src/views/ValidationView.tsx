@@ -49,7 +49,7 @@ export const ValidationView: React.FC = () => {
       {isReal ? (
         <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center space-x-2 shadow-lg">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          <span>REAL NWP + IMD TRAINED MODEL — 13,680 SAMPLES ACROSS 38 INITIALIZATION DATES</span>
+          <span>REAL GFS + OPEN-METEO VERIFIED MODEL — 13,680 SAMPLES ACROSS 38 INITIALIZATION DATES</span>
         </div>
       ) : (
         <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
