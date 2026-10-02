@@ -31,15 +31,16 @@ Rather than training a monolithic AI weather model to compete with NWP centers, 
                                 |
 +-------------------------------v-----------------------------------------+
 |                  RELIABILITY & UNCERTAINTY ENGINES                      |
-|  - Deterministic Prototype Engine (DemoReliabilityModel)                |
-|  - Drop-in Future Trained Adapter (FutureTrainedModel - XGBoost/LGBM)   |
-|  - Probability Calibration (Platt Sigmoid / Isotonic Curves)            |
-|  - Conformal Prediction Intervals (Distribution-free coverage)           |
+|  - Real Trained Reliability Model (LightGBM-v1.0-Real-NWP-IMD-Calib)    |
+|  - Probability Calibration (Non-parametric Isotonic Regression)         |
+|  - TreeSHAP Local Attributions (10 Audited Operational Features)        |
+|  - Audited Replay Benchmark Engine (DemoReliabilityModel Heuristic)     |
+|  - Conformal Prediction Intervals (Distribution-free coverage)          |
 +-------------------------------|-----------------------------------------+
                                 |
 +-------------------------------v-----------------------------------------+
 |                   DECISION SUPPORT & HITL REVIEW                        |
-|  - Explainable Drivers ("Why Distrust This Forecast?")                  |
+|  - TreeSHAP "Why Was This Flagged?" + Rule-Based Contextual Indicators  |
 |  - Historical Atmospheric Analogue Search (KNN on Synoptic Vectors)     |
 |  - Forecaster Operational Review Priority Ranking                       |
 |  - Human-in-the-Loop Feedback Ledger                                    |
@@ -53,15 +54,15 @@ Rather than training a monolithic AI weather model to compete with NWP centers, 
 +-------------------------------------------------------------------------+
 ```
 
-## 2. Separation of Concerns & Future ML Swap-In
+## 2. Separation of Concerns & Model Architecture
 
 The system adheres to strict modularity:
 1. `BaseReliabilityModel` (`backend/app/ml/base.py`):
    Defines the immutable abstract contract: `predict(features: ModelFeatures) -> RawModelOutput`.
-2. `DemoReliabilityModel` (`backend/app/ml/demo_model.py`):
-   Our current deterministic prototype engine. It derives bust risk transparently from physical indicators (ensemble spread, model conflict, lead-time decay, climatological anomaly, spatial instability). It does not require gigabytes of neural weights.
-3. `FutureTrainedModel` (`backend/app/ml/future_model.py`):
-   When final ML training is executed in Stage 2, it loads the serialized tree weights and satisfies the exact same interface. The frontend, MapLibre tiles, REST endpoints, and priority queue undergo **zero modifications**.
+2. `TrainedReliabilityModel` (`backend/app/ml/trained_model.py`):
+   Active operational model (`LightGBM-v1.0-Real-NWP-IMD-Calibrated`). Trained on 13,680 genuine NOAA GFS forecast-verification pairs with Open-Meteo 03Z–03Z centroid-based precipitation verification, calibrated via Isotonic Regression, and explained via local TreeSHAP attributions across 10 operational features.
+3. `DemoReliabilityModel` (`backend/app/ml/demo_model.py`):
+   Audited deterministic benchmark heuristic, strictly preserved for historical counterfactual replay (e.g., Cyclone Biparjoy 2023 76/100 T-5 anchor) and synthetic baseline comparisons.
 
 ## 3. Data Flow & Latency Optimization
 

@@ -31,7 +31,7 @@ Returns metadata and center coordinates for all 36 IMD Meteorological Subdivisio
 - `forecast_run` (ISO-8601 UTC string, default: `2024-07-15T00:00:00Z`)
 
 **Response:**
-Returns spatially explicit predictions for all 36 subdivisions with prototype risk scores, prototype uncertainty intervals, why-distrust empirical drivers, and review priorities. Every record includes `prototype_badge: "PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED"`.
+Returns spatially explicit predictions for all 36 subdivisions with calibrated bust probabilities, conformal uncertainty intervals, TreeSHAP feature attributions, and review priorities. Every record includes `prototype_badge: "REAL GFS + OPEN-METEO VERIFIED MODEL"` (or benchmark/fallback badges where applicable).
 
 ### `GET /api/priority`
 **Parameters:**

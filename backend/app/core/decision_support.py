@@ -28,7 +28,7 @@ class DecisionSupportEngine:
     ) -> Tuple[OperationalPriority, RiskLevel, str, List[DriverDetail]]:
         drivers: List[DriverDetail] = []
         
-        # 1. Ensemble Disagreement / Spread Check
+        # 1. Ensemble Disagreement / Spread Check (Contextual rule; not a LightGBM model feature)
         spread_thresh = 15.0 + (lead_time_days * 1.5)
         if ensemble_spread >= spread_thresh:
             drivers.append(DriverDetail(
@@ -36,7 +36,7 @@ class DecisionSupportEngine:
                 severity="HIGH",
                 metric_value=ensemble_spread,
                 benchmark_value=spread_thresh,
-                description=f"Empirical ensemble evidence: member spread of {ensemble_spread:.1f} mm exceeds the baseline benchmark ({spread_thresh:.1f} mm), statistically associated with heightened forecast instability."
+                description=f"Ensemble member spread of {ensemble_spread:.1f} mm exceeds reference threshold ({spread_thresh:.1f} mm). Rule-based context indicator (not a LightGBM model feature)."
             ))
         elif ensemble_spread >= spread_thresh * 0.7:
             drivers.append(DriverDetail(
@@ -44,17 +44,17 @@ class DecisionSupportEngine:
                 severity="MODERATE",
                 metric_value=ensemble_spread,
                 benchmark_value=spread_thresh * 0.7,
-                description=f"Moderate ensemble spread observed ({ensemble_spread:.1f} mm), indicating intermediate dispersion among NWP members."
+                description=f"Ensemble spread of {ensemble_spread:.1f} mm exceeds moderate reference threshold ({spread_thresh * 0.7:.1f} mm). Rule-based context indicator (not a LightGBM model feature)."
             ))
 
-        # 2. Multi-Model Disagreement (GFS vs AIFS)
+        # 2. Multi-Model Disagreement (GFS vs AIFS) (Contextual rule; not a LightGBM model feature)
         if model_disagreement >= 12.0:
             drivers.append(DriverDetail(
                 driver_name="Inter-Model Discrepancy (GFS vs AIFS)",
                 severity="HIGH",
                 metric_value=model_disagreement,
                 benchmark_value=12.0,
-                description=f"Model inter-comparison evidence: substantial divergence between physical NWP (GFS) and data-driven ML (AIFS) solutions ({model_disagreement:.1f} mm discrepancy), historically correlated with track/intensity shifts."
+                description=f"Model inter-comparison discrepancy between GFS and AIFS is {model_disagreement:.1f} mm, exceeding reference threshold (12.0 mm). Rule-based context indicator (not a LightGBM model feature)."
             ))
 
         # 3. Lead Time Degradation Factor
@@ -65,7 +65,7 @@ class DecisionSupportEngine:
                 severity="HIGH" if lead_time_days >= 7 else "MODERATE",
                 metric_value=float(lead_time_days),
                 benchmark_value=5.0,
-                description=f"Lead-time horizon evidence: D+{lead_time_days} lies within the medium-range empirical skill decay window where chaotic error growth is elevated."
+                description=f"Forecast lead time D+{lead_time_days} reaches or exceeds medium-range reference threshold (D+5). Rule-based context indicator."
             ))
 
         # 4. Historical Analogue Precedent
@@ -76,7 +76,7 @@ class DecisionSupportEngine:
                 severity="HIGH",
                 metric_value=float(len(busted_analogues)),
                 benchmark_value=1.0,
-                description=f"Historical precedent evidence: {len(busted_analogues)} of {len(analogues)} closest analogue atmospheric setups exhibited operational forecast busts."
+                description=f"Historical precedent: {len(busted_analogues)} of {len(analogues)} closest analogue atmospheric setups exhibited operational forecast busts."
             ))
 
         # 5. Spatial / Terrain Vulnerability
@@ -86,7 +86,7 @@ class DecisionSupportEngine:
                 severity="HIGH",
                 metric_value=forecast_value,
                 benchmark_value=40.0,
-                description="Topographic vulnerability evidence: Ghats orography and maritime boundaries statistically exhibit higher residual variance due to sub-grid convective processes."
+                description=f"Forecast precipitation ({forecast_value:.1f} mm) in coastal or Ghats terrain exceeds reference threshold (40.0 mm). Rule-based context indicator."
             ))
 
         # Risk Level & Operational Priority (Synchronized to Calibrated P(Bust) Meteorological Thresholds)

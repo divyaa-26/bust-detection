@@ -2,9 +2,8 @@
 ## SIH26079 — Forecast Reliability Intelligence & Decision-Support System
 
 > **SCIENTIFIC CREDIBILITY NOTICE**:
-> All AI-derived predictions in this prototype are explicitly marked with the persistent indicator:
-> `PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED`
-> All uncertainty outputs represent **Prototype Uncertainty Intervals** (residual-spread heuristic envelopes). No unearned claims of calibrated probabilities or 90% conformal coverage are made.
+> - Operational predictions on the main dashboard are powered by the real trained model: `REAL GFS + OPEN-METEO VERIFIED MODEL` (`LightGBM-v1.0-Real-NWP-IMD-Calibrated`), calibrated via Isotonic Regression with local TreeSHAP feature attributions.
+> - Historical replay counterfactuals (e.g. Cyclone Biparjoy) run under `HISTORICAL CASE DIAGNOSTIC (AUDITED BENCHMARK)` using the audited deterministic benchmark heuristic (`DemoReliabilityModel`), preserving the frozen 76/100 T-5 anchor under strict as-of temporal cutoffs.
 
 ---
 
@@ -36,7 +35,7 @@ The interface includes a dedicated **SIH 2026 Evaluation Flow Stepper** bar loca
 - **Observation**:
   - The Lead Horizon scrubber is set to **D+5** (`precipitation_mm_day`).
   - India choropleth highlights high-risk zones across Western and Coastal India.
-  - Notice the persistent badge: `PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED`.
+  - Notice the persistent badge: `REAL GFS + OPEN-METEO VERIFIED MODEL`.
 
 ### Step 2: Historical Replay at T-5 (Cyclone Biparjoy Landfall)
 - **Action**: Click button `2. Replay T-5 (Biparjoy)`.

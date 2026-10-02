@@ -54,7 +54,7 @@ export const ValidationView: React.FC = () => {
       ) : (
         <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
           <AlertTriangle className="w-4 h-4 text-amber-400" />
-          <span>PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED (STAGE 1 ARCHITECTURE)</span>
+          <span>SYNTHETIC DEMO FALLBACK — NOT REAL TRAINED MODEL</span>
         </div>
       )}
 

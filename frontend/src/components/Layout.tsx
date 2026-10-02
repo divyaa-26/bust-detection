@@ -82,8 +82,9 @@ export const Layout: React.FC<LayoutProps> = ({
           {/* Top Right Controls: Synoptic Time */}
           <div className="flex items-center space-x-3 shrink-0 text-xs font-mono">
             <div className="flex flex-col text-right">
-              <span className="text-[10px] uppercase text-slate-400">SYNOPTIC RUN</span>
+              <span className="text-[10px] uppercase text-slate-400">ARCHIVED FORECAST RUN</span>
               <span className="text-sky-300 text-xs font-bold">{initTime}</span>
+              <span className="text-[9px] text-slate-500">Validation-period reference run</span>
             </div>
           </div>
         </div>

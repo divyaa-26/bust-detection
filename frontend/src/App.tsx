@@ -138,6 +138,19 @@ export const App: React.FC = () => {
               </div>
             </div>
 
+            {/* Archived Run Transparency Badge */}
+            <div className="hidden md:flex items-center space-x-2 px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-800 text-[11px] font-mono shrink-0">
+              <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <div className="flex flex-col text-left leading-tight">
+                <span className="font-bold text-slate-200">
+                  ARCHIVED FORECAST RUN — 2024-07-15 00Z
+                </span>
+                <span className="text-[9px] text-slate-400">
+                  Validation-period reference run
+                </span>
+              </div>
+            </div>
+
             {/* Right Group: Variable, Map Layer, Refresh (Secondary Controls) */}
             <div className="flex items-center gap-2 shrink-0 bg-slate-900/60 border border-slate-800/80 rounded-lg p-1">
               <div className="flex items-center gap-1.5 pl-1.5">

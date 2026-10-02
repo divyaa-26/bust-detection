@@ -489,7 +489,7 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                     Open-Meteo Historical Archive (03Z–03Z Centroid Verification)
                   </div>
                   <div className="text-[9px] text-slate-400 mt-0.5">
-                    03Z–03Z Window Alignment · Anti-Leakage Certified · Centroid Precipitation Verification
+                    03Z–03Z Window Alignment · Temporal Leakage Guards Implemented · Centroid Precipitation Verification
                   </div>
                 </div>
               </div>

@@ -478,16 +478,20 @@ export const WhyDistrustPanel: React.FC<WhyDistrustPanelProps> = ({
           </div>
         </div>
 
-        {/* WHY DISTRUST THIS FORECAST? Physical Drivers */}
-        <div className="p-3.5 rounded-lg bg-red-950/20 border border-red-500/30">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-red-500/20">
-            <div className="flex items-center space-x-2 text-red-400">
+        {/* RULE-BASED CONTEXT INDICATORS — NOT MODEL INPUTS */}
+        <div className="p-3.5 rounded-lg bg-slate-900/90 border border-slate-800">
+          <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-slate-800">
+            <div className="flex items-center space-x-2 text-amber-400">
               <AlertOctagon className="w-4 h-4" />
-              <h3 className="font-bold text-xs uppercase tracking-wider">Physical Meteorological Drivers</h3>
+              <h3 className="font-bold text-xs uppercase tracking-wider">RULE-BASED CONTEXT INDICATORS — NOT MODEL INPUTS</h3>
             </div>
-            <span className="text-[10px] text-red-400/80 font-mono">
-              {prediction.why_distrust_drivers.length} Drivers
+            <span className="text-[10px] text-amber-400/80 font-mono">
+              {prediction.why_distrust_drivers.length} Indicators
             </span>
+          </div>
+
+          <div className="text-[10px] text-slate-400 mb-2 leading-relaxed">
+            Rule-based threshold indicators provided for synoptic context. These metrics (e.g. ensemble spread, GFS-AIFS disagreement) are separate diagnostic references and are NOT features of the trained 10-feature LightGBM model.
           </div>
 
           <div className="space-y-2">

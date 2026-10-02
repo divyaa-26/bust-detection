@@ -67,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         ) : (
           <div className="bg-amber-500/15 border-b border-amber-500/30 px-4 py-1 text-center font-mono text-[10px] text-amber-300 font-bold tracking-wider uppercase flex items-center justify-center space-x-2">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-            <span>PROTOTYPE ESTIMATE — NOT TRAINED / VALIDATED (SYNTHETIC DEMO FALLBACK)</span>
+            <span>SYNTHETIC DEMO FALLBACK — NOT REAL TRAINED MODEL</span>
           </div>
         )}
 
