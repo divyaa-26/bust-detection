@@ -422,8 +422,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-slate-500 text-[10px]">PROBABILITY CALIBRATION</div>
-                  <div className="font-bold text-emerald-400">Isotonic Regression (10 Bins)</div>
+                  <div className="text-slate-500 text-[10px]">CALIBRATION</div>
+                  <div className="font-bold text-emerald-400">Isotonic Regression</div>
+                  <div className="text-[9px] text-slate-400 font-mono mt-0.5">Reliability Diagram: 10 bins</div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
                   <div className="text-slate-500 text-[10px]">DATA MODE</div>
@@ -444,7 +445,9 @@ export const BottomDrawers: React.FC<BottomDrawersProps> = ({
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
                   <div className="text-slate-500 text-[10px]">VERIFICATION SOURCE</div>
-                  <div className="font-bold text-slate-200">IMD 24h Daily Gridded (03Z–03Z)</div>
+                  <div className="font-bold text-slate-200 text-[10px] leading-tight" title="Open-Meteo Historical Archive — 03Z–03Z centroid-based precipitation verification">
+                    Open-Meteo Historical Archive (03Z–03Z Centroid Verification)
+                  </div>
                 </div>
               </div>
 
